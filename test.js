@@ -26,12 +26,13 @@ function testComponents() {
     stage.enableMouseOver();
       			
     var size = {width: 600, height: 400};
-  	var segments = {countX: 10, minCountY: 10};
+  	var segments = {multiplier: 0.1, countX: 10, minCountY: 10, maxCountShift: 1};
   	var style = {
         background: {color: "#00AAFF", alpha: 0.1},
-        axis: {thickness: 2, color: "#00FFFF", alpha: 0.8}
+        axis: {thickness: 2, color: "#00FFFF", alpha: 0.8},
+        grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5}
     };
-    var chart = stage.addChild(new Chart(size, segments, style));
+    var chart = stage.addChild(new tgc.Chart(size, segments, style));
     chart.y = 50;
     chart.x = 50;
       			
