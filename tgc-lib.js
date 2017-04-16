@@ -32,25 +32,40 @@ var tgc = {};
     
     var p = createjs.extend(Chart, createjs.Container);
     
-    //PUBLIC METHODS
+    //
+    // PUBLIC METHODS
+    //
     
     p.append = function(data) {
+        console.log("append");
         var totalData = this.data.concat(data);
-        var freeSegmentsCount = Math.max(this.segments.countX - this.data.length, 0);
+        var freeSegmentsCount = Math.max(this.segments.countX - Math.max(this.data.length - 1, 0), 0);
         var stepX = this.size.width / this.segments.countX;
         var offsetX = 0;
         
+        /*
+        var newMaxCountY = this._getMaxCountX(data, this.maxCountY);
+        if (newMaxCountY > this.maxCountY && newMaxCountY > this.segments.minCountY) {
+            this.maxCountY = newMaxCountY;
+            this._drawGridShape(this.segments.countX, newMaxCountY, this.style.grid);
+        }*/
+        
+        console.log("m " + this.maxCountY);
+        console.log("f " + freeSegmentsCount);
         if (freeSegmentsCount) {
             offsetX = this.data.length * stepX;
             if (this.data.length) {
                 data.unshift(this.data[this.data.length - 1]);
-                offsetX --;
+                offsetX -= stepX;
             }
         } else {
             this.chartShape.graphics.clear();
+            data = totalData.slice(-(this.segments.countX + 1));
         }
         this._drawChart(offsetX, stepX, data, this.style.chart);
         this.data = totalData;
+        console.log("l " + this.data.length);
+        console.log("");
     };
     
     p.clear = function() {
@@ -64,10 +79,19 @@ var tgc = {};
         this._drawGridShape(this.segments.countX, Math.max(this.segments.minCountY, this.maxCountY), this.style.grid);
     };
     
-    //PRIVATE METHODS
+    //
+    // PRIVATE METHODS
+    //
     
     p._setup = function() {
         this.updateStyle();
+    };
+    
+    p._getMaxCountX = function(data, maxCountY) {
+        for (var i = 0; i < data.length; i++) {
+            maxCountY = Math.max(data[i], maxCountY);
+        }
+        return maxCountY;
     };
     
     p._drawChart = function(offsetX, stepX, data, style) {
@@ -75,8 +99,9 @@ var tgc = {};
         var aX, aY, bX, bY;
         aX = offsetX;
         aY = data[0] * mult;
+        if (!offsetX) this._drawPoint(0, aY, "standart", style);
         for (var i = 0; i < data.length - 1; i++) {
-            bX = offsetX + stepX * i;
+            bX = offsetX + stepX * (i + 1);
             bY = data[i + 1] * mult;
             this._drawSegment(aX, aY, bX, bY, style);
             aX = bX;
