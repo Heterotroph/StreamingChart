@@ -42,15 +42,8 @@ var tgc = {};
         var freeSegmentsCount = Math.max(this.segments.countX - Math.max(this.data.length - 1, 0), 0);
         var stepX = this.size.width / this.segments.countX;
         var offsetX = 0;
-        
-        /*
-        var newMaxCountY = this._getMaxCountX(data, this.maxCountY);
-        if (newMaxCountY > this.maxCountY && newMaxCountY > this.segments.minCountY) {
-            this.maxCountY = newMaxCountY;
-            this._drawGridShape(this.segments.countX, newMaxCountY, this.style.grid);
-        }*/
-        
-        console.log("m " + this.maxCountY);
+        this.updateStyle();
+        console.log("m " + this.maxCountY + " " + this.segments.minCountY);
         console.log("f " + freeSegmentsCount);
         if (freeSegmentsCount) {
             offsetX = this.data.length * stepX;
@@ -85,13 +78,6 @@ var tgc = {};
     
     p._setup = function() {
         this.updateStyle();
-    };
-    
-    p._getMaxCountX = function(data, maxCountY) {
-        for (var i = 0; i < data.length; i++) {
-            maxCountY = Math.max(data[i], maxCountY);
-        }
-        return maxCountY;
     };
     
     p._drawChart = function(offsetX, stepX, data, style) {

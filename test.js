@@ -26,7 +26,7 @@ function testComponents() {
     stage.enableMouseOver();
       			
     var size = {width: 1000, height: 400};
-  	var segments = {multiplier: 0.2, countX: 100, minCountY: 10, maxCountShift: 1};
+  	var segments = {multiplier: 0.2, countX: 25, minCountY: 10, maxCountShift: 1};
   	var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 2, color: "#00FFFF", alpha: 0.8},
@@ -36,14 +36,13 @@ function testComponents() {
     var chart = stage.addChild(new tgc.Chart(size, segments, style));
     chart.y = 50;
     chart.x = 50;
-    chart.append([900, 300, 800, 1000]);
-    chart.append([500]);
+    chart.append([1200, 950, 1000, 400, 100, 0, 0, 300, 200]);
       			
     createjs.Ticker.on("tick", function() {
         stage.update();
     });
     
     setInterval(function() {
-        chart.append([Math.random() * 1200 + 100]);
-    }, 100);
+        chart.append([Math.random() * 1000 + 400]);
+    }, 200);
 }
