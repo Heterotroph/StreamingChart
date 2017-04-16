@@ -5,6 +5,7 @@ html, body {
     border: 0;
     overflow: hidden;
     display: block;
+    background-color: #ffffff;
 }
 .canvas {
     position: absolute;

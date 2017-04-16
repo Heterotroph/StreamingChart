@@ -1,49 +1,12 @@
 <head>
     <meta charset="utf-8">
-    
     <link rel="stylesheet" type="text/css" href="./test.css">
-    
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
-    <script src="./tgc.js"></script>
-    
+    <script src="./tgc-lib.js"></script>
+    <script src="./test.js"></script>
     <title>Test</title>
 </head>
-<body>
-    <canvas id="c"></canvas>
-    
-    <script>
-        (function() {
-            var
-            canvas = document.getElementById("c"),
-            context = canvas.getContext("2d");
-                
-            initialize();
-                
-            function initialize() {
-                window.addEventListener("resize", resizeCanvas, false);
-                resizeCanvas();
-            }
-            
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-        })();
-    </script>
-    
-    <script>
-      var stage, holder;
-  		function init() {
-  			stage = new createjs.Stage("c");
-  			stage.enableMouseOver();
-  			
-  			var chart = stage.addChild(new Chart("#ff0000"));
-  			chart.y = 10;
-  			chart.x = 10;
-  			
-  			createjs.Ticker.on("tick", stage);
-  		}
-  		init();
-    </script>
+<body onload="init()">
+    <canvas id="c">empty</canvas>
 </body>
 </html>
