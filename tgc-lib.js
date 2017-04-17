@@ -9,7 +9,7 @@ var tgc = {};
      * style = {
      *  background: {color: "#000000", alpha: 0.5},
      *  axis: {thickness: 3, color: "#FF0000", alpha: 1},
-     *  grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 40},
+     *  grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20},
      *  chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8}
      * }
      */ 
@@ -44,10 +44,11 @@ var tgc = {};
         var offset = totalData.length > this._widthSegmentsCount ? 0 : Math.max(this._data.length - 1, 0);
         var offsetX = offset * this._point.width;
         var lengthData = Math.min(totalData.length - offset, this._widthSegmentsCount + 1);
+        var chartData = totalData.slice(-lengthData);
         
         if (!offset) this._chartShape.graphics.clear();
         
-        this._drawChart(offsetX, this._point.width, totalData.slice(-lengthData), this._style.chart);
+        this._drawChart(offsetX, this._point.width, chartData, this._style.chart);
         this._data = totalData;
     };
     
@@ -76,6 +77,7 @@ var tgc = {};
     p._drawChart = function(offsetX, stepX, data, style) {
         var multY = this._point.height;
         var aX, aY, bX, bY;
+        
         aX = offsetX;
         aY = data[0] * multY;
         if (!offsetX) this._drawPoint(0, aY, "standart", style);
@@ -120,6 +122,7 @@ var tgc = {};
     
     p._drawBackgroundShape = function(size, style) {
         var graphics = this._backgroundShape.graphics.clear();
+        if (style.alpha === 0) return;
         graphics.beginFill(style.color);
         graphics.drawRoundRect(0, 0, size.width, size.height, 3);
         this._backgroundShape.alpha = style.alpha;
@@ -127,6 +130,7 @@ var tgc = {};
     
     p._drawAxisShape = function(size, style) {
         var graphics = this._axisShape.graphics.clear();
+        if (style.alpha === 0) return;
         graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
         graphics.moveTo(0, 0).lineTo(0, size.height).lineTo(size.width, size.height);
         graphics.endStroke();
@@ -135,13 +139,14 @@ var tgc = {};
     
     p._drawGridShape = function(stepX, stepY, style) {
         var graphics = this._gridShape.graphics.clear();
+        if (style.alpha === 0) return;
         graphics.setStrokeDash([3, 5]);
         graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
-        for (var x = stepX; x < this._size.width; x += stepX) {
+        for (var x = stepX; x < this._size.width && stepX !== 0; x += stepX) {
             graphics.moveTo(x, 0);
             graphics.lineTo(x, this._size.height);
         }
-        for (var y = this._size.height - stepY; y > 0; y -= stepY) {
+        for (var y = this._size.height - stepY; y > 0 && stepY !== 0; y -= stepY) {
             graphics.moveTo(0, y);
             graphics.lineTo(this._size.width, y);
         }
