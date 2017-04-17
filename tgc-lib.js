@@ -4,7 +4,7 @@ var tgc = {};
 
     /**
      * size: {width: 500, height: 400}
-     * segments: {multiplier: 0.1, countX: 10, minCountY: 10, maxCountShift: 2}
+     * segments: {multiplier: 0.1, countX: 10, minCountY: 10}
      * style: {
      *  background: {color: "#000000", alpha: 0.5},
      *  axis: {thickness: 3, color: "#FF0000", alpha: 1},
@@ -27,7 +27,7 @@ var tgc = {};
         this.gridShape = this.addChild(new createjs.Shape());
         this.chartShape = this.addChild(new createjs.Shape());
         
-        this._setup();
+        this.updateStyle();
     }
     
     var p = createjs.extend(Chart, createjs.Container);
@@ -37,28 +37,18 @@ var tgc = {};
     //
     
     p.append = function(data) {
-        console.log("append");
         var totalData = this.data.concat(data);
-        var freeSegmentsCount = Math.max(this.segments.countX - Math.max(this.data.length - 1, 0), 0);
         var stepX = this.size.width / this.segments.countX;
-        var offsetX = 0;
-        this.updateStyle();
-        console.log("m " + this.maxCountY + " " + this.segments.minCountY);
-        console.log("f " + freeSegmentsCount);
-        if (freeSegmentsCount) {
-            offsetX = this.data.length * stepX;
-            if (this.data.length) {
-                data.unshift(this.data[this.data.length - 1]);
-                offsetX -= stepX;
-            }
-        } else {
-            this.chartShape.graphics.clear();
-            data = totalData.slice(-(this.segments.countX + 1));
-        }
-        this._drawChart(offsetX, stepX, data, this.style.chart);
+        
+        var offset = totalData.length > this.segments.countX ? 0 : Math.max(this.data.length - 1, 0);
+        var offsetX = offset * stepX;
+        var lengthData = Math.min(totalData.length - offset, this.segments.countX + 1);
+        
+        if (!offset) this.chartShape.graphics.clear();
+        console.log("offset " + offset + "; data " + totalData.slice(-lengthData));
+        
+        this._drawChart(offsetX, stepX, totalData.slice(-lengthData), this.style.chart);
         this.data = totalData;
-        console.log("l " + this.data.length);
-        console.log("");
     };
     
     p.clear = function() {
@@ -75,10 +65,6 @@ var tgc = {};
     //
     // PRIVATE METHODS
     //
-    
-    p._setup = function() {
-        this.updateStyle();
-    };
     
     p._drawChart = function(offsetX, stepX, data, style) {
         var mult = this.segments.multiplier;
