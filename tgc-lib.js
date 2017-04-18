@@ -4,13 +4,13 @@ var tgc = {};
 
     /**
      * Example of arguments:
-     * size = {width: 1000, height: 400}
+     * size = {width: 1000, height: 400, dynamicHeight: true}
      * point = {width: 50, height: 1}
      * style = {
      *  background: {color: "#000000", alpha: 0.5},
      *  axis: {thickness: 3, color: "#FF0000", alpha: 1},
      *  grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20},
-     *  chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8}
+     *  chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"} //bounds "chart", "points", "full", "none"
      * }
      */ 
     function StreamingChart(size, point, style) {
@@ -28,11 +28,15 @@ var tgc = {};
         this._axisShape = this.addChild(new createjs.Shape());
         this._gridShape = this.addChild(new createjs.Shape());
         this._chartShape = this.addChild(new createjs.Shape());
+        this._pointShape = this.addChild(new createjs.Shape());
         
         this.updateStyle();
     }
     
     var p = createjs.extend(StreamingChart, createjs.Container);
+    
+    var CHART_BOUNDS = {"chart": true, "full": true, "none": false};
+    var POINT_BOUNDS = {"points": true, "full": true, "none": false};
     
     //
     // PUBLIC METHODS
@@ -46,7 +50,10 @@ var tgc = {};
         var lengthData = Math.min(totalData.length - offset, this._widthSegmentsCount + 1);
         var chartData = totalData.slice(-lengthData);
         
-        if (!offset) this._chartShape.graphics.clear();
+        if (!offset) {
+          this._chartShape.graphics.clear();
+          this._pointShape.graphics.clear();
+        }
         
         this._drawChart(offsetX, this._point.width, chartData, this._style.chart);
         this._data = totalData;
@@ -68,6 +75,7 @@ var tgc = {};
         var stepX = this._point.width * this._style.grid.width;
         var stepY = this._point.height * this._style.grid.height;
         this._drawGridShape(stepX, stepY, this._style.grid);
+        this._drawMaskShape(this._size.width, this._size.height, CHART_BOUNDS[this._style.chart.bounds]);
     };
     
     //
@@ -93,7 +101,7 @@ var tgc = {};
     p._drawSegment = function(aX, aY, bX, bY, style) {
         var graphics = this._chartShape.graphics;
         
-        graphics.setStrokeStyle(style.thickness, "round");
+        graphics.setStrokeStyle(style.thickness);
         graphics.beginStroke(style.color);
         graphics.moveTo(aX, this._size.height - aY).lineTo(bX, this._size.height - bY);
         graphics.endStroke();
@@ -102,7 +110,13 @@ var tgc = {};
     };
     
     p._drawPoint = function(x, y, type, style) {
-        var graphics = this._chartShape.graphics;
+        var graphics = this._pointShape.graphics;
+        if (!style.radius) return;
+        if (!POINT_BOUNDS[style.bounds]) {
+            var boolX = x < 0 || x > this._size.width;
+            var boolY = y < 0 || y > this._size.height;
+            if (boolX || boolY) return;
+        }
         switch(type) {
         case "selected":
             graphics.setStrokeStyle(style.thickness, "round");
@@ -122,7 +136,7 @@ var tgc = {};
     
     p._drawBackgroundShape = function(size, style) {
         var graphics = this._backgroundShape.graphics.clear();
-        if (style.alpha === 0) return;
+        if (!style.alpha) return;
         graphics.beginFill(style.color);
         graphics.drawRoundRect(0, 0, size.width, size.height, 3);
         this._backgroundShape.alpha = style.alpha;
@@ -130,7 +144,7 @@ var tgc = {};
     
     p._drawAxisShape = function(size, style) {
         var graphics = this._axisShape.graphics.clear();
-        if (style.alpha === 0) return;
+        if (!style.alpha) return;
         graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
         graphics.moveTo(0, 0).lineTo(0, size.height).lineTo(size.width, size.height);
         graphics.endStroke();
@@ -139,7 +153,7 @@ var tgc = {};
     
     p._drawGridShape = function(stepX, stepY, style) {
         var graphics = this._gridShape.graphics.clear();
-        if (style.alpha === 0) return;
+        if (!style.alpha) return;
         graphics.setStrokeDash([3, 5]);
         graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
         for (var x = stepX; x < this._size.width && stepX !== 0; x += stepX) {
@@ -152,6 +166,14 @@ var tgc = {};
         }
         graphics.endStroke();
         this._gridShape.alpha = style.alpha;
+    };
+    
+    p._drawMaskShape = function(width, height, show) {
+        this.mask = null;
+        if (show) return;
+        this._chartShape.mask = new createjs.Shape();
+        this._chartShape.mask.graphics.beginFill("#000000");
+        this._chartShape.mask.graphics.drawRect(0, 0, width, height);
     };
     
     // ---
