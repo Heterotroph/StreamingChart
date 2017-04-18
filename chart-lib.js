@@ -16,20 +16,27 @@ var charts = {};
     function StreamingChart(size, point, style) {
         this.Container_constructor();
         
+        //chart points data
         this._data = [];
         
+        //configuration
         this._size = size;
         this._point = point;
         this._style = style;
         
+        //dynamic values
         this._widthSegmentsCount = Math.floor(this._size.width /  this._point.width);
+        //this._extremeMaxValue = Number.MIN_VALUE;
+        //this._extremeMinValue = Number.MAX_VALUE;
         
+        //views
         this._backgroundShape = this.addChild(new createjs.Shape());
         this._axisShape = this.addChild(new createjs.Shape());
         this._gridShape = this.addChild(new createjs.Shape());
         this._chartShape = this.addChild(new createjs.Shape());
         this._pointShape = this.addChild(new createjs.Shape());
         
+        //apply style configuration
         this.updateStyle();
     }
     
@@ -39,7 +46,7 @@ var charts = {};
     var POINT_BOUNDS = {"points": true, "full": true, "none": false};
     
     //
-    // PUBLIC METHODS
+    //  PUBLIC METHODS
     //
     
     p.append = function(data) {
@@ -50,11 +57,7 @@ var charts = {};
         var lengthData = Math.min(totalData.length - offset, this._widthSegmentsCount + 1);
         data = totalData.slice(-lengthData);
         
-        if (!offset) {
-          this._chartShape.graphics.clear();
-          this._pointShape.graphics.clear();
-        }
-        
+        if (data.length == this._widthSegmentsCount + 1) this._clearChartAndPoints();
         this._drawChart(offsetX, this._point.width, data, this._style.chart);
         this._data = totalData.length >= this._widthSegmentsCount + 1 ? totalData.slice(-this._widthSegmentsCount) : totalData;
     };
@@ -79,7 +82,7 @@ var charts = {};
     };
     
     //
-    // PRIVATE METHODS
+    //  PRIVATE METHODS (VIEW)
     //
     
     p._drawChart = function(offsetX, stepX, data, style) {
@@ -130,6 +133,11 @@ var charts = {};
         }
     };
     
+    p._clearChartAndPoints = function() {
+        this._chartShape.graphics.clear();
+        this._pointShape.graphics.clear();
+    };
+    
     p._drawBackgroundShape = function(size, style) {
         var graphics = this._backgroundShape.graphics.clear();
         if (!style.alpha) return;
@@ -172,8 +180,10 @@ var charts = {};
         this._chartShape.mask.graphics.drawRect(0, 0, width, height);
     };
     
-    // ---
+    //
+    //  PRIVATE METHODS (UTILS)
+    //
     
-    
+    //  ---
     charts.StreamingChart = createjs.promote(StreamingChart, "Container");
 }());
