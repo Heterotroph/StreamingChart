@@ -35,7 +35,7 @@ var charts = {};
     
     var p = createjs.extend(StreamingChart, createjs.Container);
     
-    var BOUNDS_PERMIS = {"chart": true, "full": true, "none": false};
+    var CHART_BOUNDS = {"chart": true, "full": true, "none": false};
     var POINT_BOUNDS = {"points": true, "full": true, "none": false};
     
     //
@@ -48,15 +48,15 @@ var charts = {};
         var offset = totalData.length > this._widthSegmentsCount ? 0 : Math.max(this._data.length - 1, 0);
         var offsetX = offset * this._point.width;
         var lengthData = Math.min(totalData.length - offset, this._widthSegmentsCount + 1);
-        var chartData = totalData.slice(-lengthData);
+        data = totalData.slice(-lengthData);
         
         if (!offset) {
           this._chartShape.graphics.clear();
           this._pointShape.graphics.clear();
         }
         
-        this._drawChart(offsetX, this._point.width, chartData, this._style.chart);
-        this._data = totalData;
+        this._drawChart(offsetX, this._point.width, data, this._style.chart);
+        this._data = totalData.length >= this._widthSegmentsCount + 1 ? totalData.slice(-this._widthSegmentsCount) : totalData;
     };
     
     p.clear = function() {

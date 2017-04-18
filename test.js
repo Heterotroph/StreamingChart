@@ -36,7 +36,7 @@ function testComponents() {
 
 function createChartA() {
     var size = {width: 1000, height: 300};
-    var point = {width: 50, height: 0.3, dynamic: false};
+    var point = {width: 50, height: 0.3, dynamic: 0.05};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
@@ -59,7 +59,7 @@ function createChartA() {
 
 function createChartB() {
     var size = {width: 1000, height: 100};
-    var point = {width: 10, height: 0.1, dynamic: false};
+    var point = {width: 10, height: 0.1, dynamic: 0.1};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 2, color: "#FF0000", alpha: 0.8},
@@ -83,7 +83,7 @@ function createChartB() {
 
 function createChartC() {
     var size = {width: 1000, height: 100};
-    var point = {width: 10, height: 0.1, dynamic: false};
+    var point = {width: 10, height: 0.1, dynamic: 0};
     var style = {
         background: {color: "#000000", alpha: 0.9},
         axis: {thickness: 2, color: "#006666", alpha: 0.8},
