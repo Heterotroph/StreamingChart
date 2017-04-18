@@ -4,8 +4,8 @@ var tgc = {};
 
     /**
      * Example of arguments:
-     * size = {width: 1000, height: 400, dynamicHeight: true}
-     * point = {width: 50, height: 1}
+     * size = {width: 1000, height: 400}
+     * point = {width: 50, height: 1, dynamic: true}
      * style = {
      *  background: {color: "#000000", alpha: 0.5},
      *  axis: {thickness: 3, color: "#FF0000", alpha: 1},
