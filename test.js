@@ -45,7 +45,7 @@ function createChartA() {
         //chart: {thickness: 5, radius: 6, color: "#006666", alpha: 0.5}
     };
     
-    var chart = new tgc.StreamingChart(size, point, style);
+    var chart = new charts.StreamingChart(size, point, style);
     chart.y = 20;
     chart.x = 20;
     chart.append([700, 600, 200, 0, 100, 150, 0, 50, 400]);
@@ -67,7 +67,7 @@ function createChartB() {
         chart: {thickness: 2, radius: 2, color: "#000000", alpha: 0.8, bounds: "points"}
     };
     
-    var chart = new tgc.StreamingChart(size, point, style);
+    var chart = new charts.StreamingChart(size, point, style);
     chart.y = 380;
     chart.x = 20;
     
@@ -91,7 +91,7 @@ function createChartC() {
         chart: {thickness: 1, radius: 0, color: "#FF0000", alpha: 1, bounds: "none"}
     };
     
-    var chart = new tgc.StreamingChart(size, point, style);
+    var chart = new charts.StreamingChart(size, point, style);
     chart.y = 540;
     chart.x = 20;
     

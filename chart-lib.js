@@ -1,4 +1,4 @@
-var tgc = {};
+var charts = {};
 
 (function() {
 
@@ -178,5 +178,6 @@ var tgc = {};
     
     // ---
     
-    tgc.StreamingChart = createjs.promote(StreamingChart, "Container");
+    
+    charts.StreamingChart = createjs.promote(StreamingChart, "Container");
 }());
