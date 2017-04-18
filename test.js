@@ -36,8 +36,8 @@ function testComponents() {
 
 function createChartA() {
     var size = {width: 1000, height: 300};
-  	var point = {width: 50, height: 0.3, dynamic: false};
-  	var style = {
+    var point = {width: 50, height: 0.3, dynamic: false};
+    var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
         grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.75, width: 2, height: 100},
@@ -59,8 +59,8 @@ function createChartA() {
 
 function createChartB() {
     var size = {width: 1000, height: 100};
-  	var point = {width: 10, height: 0.1, dynamic: false};
-  	var style = {
+    var point = {width: 10, height: 0.1, dynamic: false};
+    var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 2, color: "#FF0000", alpha: 0.8},
         grid: {thickness: 0.1, color: "#FF0000", alpha: 0.6, width: 2, height: 200},
@@ -83,8 +83,8 @@ function createChartB() {
 
 function createChartC() {
     var size = {width: 1000, height: 100};
-  	var point = {width: 10, height: 0.1, dynamic: false};
-  	var style = {
+    var point = {width: 10, height: 0.1, dynamic: false};
+    var style = {
         background: {color: "#000000", alpha: 0.9},
         axis: {thickness: 2, color: "#006666", alpha: 0.8},
         grid: {thickness: 0, color: "#000000", alpha: 0, width: 0, height: 0},
