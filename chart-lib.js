@@ -5,7 +5,7 @@ var charts = {};
     /**
      * Example of arguments:
      * size = {width: 1000, height: 400}
-     * point = {width: 50, height: 1, dynamic: true}
+     * point = {width: 50, height: 1, dynamic: 0.1}
      * style = {
      *  background: {color: "#000000", alpha: 0.5},
      *  axis: {thickness: 3, color: "#FF0000", alpha: 1},
@@ -35,7 +35,7 @@ var charts = {};
     
     var p = createjs.extend(StreamingChart, createjs.Container);
     
-    var CHART_BOUNDS = {"chart": true, "full": true, "none": false};
+    var BOUNDS_PERMIS = {"chart": true, "full": true, "none": false};
     var POINT_BOUNDS = {"points": true, "full": true, "none": false};
     
     //
@@ -112,11 +112,7 @@ var charts = {};
     p._drawPoint = function(x, y, type, style) {
         var graphics = this._pointShape.graphics;
         if (!style.radius) return;
-        if (!POINT_BOUNDS[style.bounds]) {
-            var boolX = x < 0 || x > this._size.width;
-            var boolY = y < 0 || y > this._size.height;
-            if (boolX || boolY) return;
-        }
+        if (!POINT_BOUNDS[style.bounds] && !this.hitTest(x, y)) return;
         switch(type) {
         case "selected":
             graphics.setStrokeStyle(style.thickness, "round");
