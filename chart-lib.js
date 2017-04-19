@@ -4,14 +4,14 @@ var charts = {};
 
     /**
      * Example of arguments:
-     * size = {width: 1000, height: 400}
-     * point = {width: 50, height: 1, dynamic: 0.1}
-     * style = {
-     *  background: {color: "#000000", alpha: 0.5},
-     *  axis: {thickness: 3, color: "#FF0000", alpha: 1},
-     *  grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
-     *  extreme: {thickness: 1, minColor: "#000000", maxColor: "#FF0000", alpha: 1},
-     *  chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"} //bounds "chart", "points", "full", "none"
+     *  size = {width: 1000, height: 400}
+     *  point = {width: 50, height: 1, dynamic: 0.1}
+     *  style = {
+     *      background: {color: "#000000", alpha: 0.5},
+     *      axis: {thickness: 3, color: "#FF0000", alpha: 1},
+     *      grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
+     *      extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 1},
+     *      chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"}
      * }
      */ 
     function StreamingChart(size, point, style) {
@@ -34,10 +34,11 @@ var charts = {};
         
         //views
         this._backgroundShape = this.addChild(new createjs.Shape());
-        this._axisShape = this.addChild(new createjs.Shape());
         this._gridShape = this.addChild(new createjs.Shape());
+        this._maxShape = this.addChild(new createjs.Shape());
+        this._minShape = this.addChild(new createjs.Shape());
+        this._axisShape = this.addChild(new createjs.Shape());
         this._chartShape = this.addChild(new createjs.Shape());
-        this._extremeShape = this.addChild(new createjs.Shape());
         this._pointShape = this.addChild(new createjs.Shape());
         
         //apply style configuration
@@ -52,13 +53,9 @@ var charts = {};
     
     p.append = function(data) {
         var totalData = this._data.concat(data);
-        var extremeKey = this._processExtreme(data);
         
-        if (totalData.length > 2) {
-            var maxY = this._extremeMax.value;
-            var minY = this._extremeMin.value;
-            this._drawExtremeShape(extremeKey, maxY, minY, this._style.extreme, this._axisThicknessDiv2);
-        }
+        this._processExtreme(totalData, data.length);
+        if (totalData.length > 2) this._moveExtreme();
         
         var offset = totalData.length > this._widthSegmentsCount ? 0 : Math.max(this._data.length - 1, 0);
         var offsetX = offset * this._point.width;
@@ -83,16 +80,26 @@ var charts = {};
     p.updateStyle = function() {
         this._drawBackgroundShape(this._size, this._style.background);
         this._drawAxisShape(this._size, this._style.axis);
+        
         var stepX = this._point.width * this._style.grid.width;
         var stepY = this._point.height * this._style.grid.height;
         this._drawGridShape(stepX, stepY, this._style.grid);
+        
         var boundsKey = this._style.chart.bounds;
         this._isDrawPoints = boundsKey == "points" || boundsKey == "full";
-        var isNotMaskDisplay = boundsKey == "chart" || boundsKey == "full";
+        var isMaskDisplay = boundsKey != "chart" && boundsKey != "full";
         var maskOffset = this._style.axis.thickness / 2;
         this._axisThicknessDiv2 = maskOffset;
-        if (!isNotMaskDisplay) {
+        if (isMaskDisplay) {
             this._drawMaskShape(maskOffset, 0, this._size.width - maskOffset, this._size.height - maskOffset);
+        }
+        
+        var extremeAlpha = this._style.extreme.alpha;
+        var extremeThickness = this._style.extreme.thickness;
+        if (extremeAlpha) {
+            this._minShape.alpha = this._maxShape.alpha = extremeAlpha;
+            this._drawLevelLine(this._maxShape, extremeThickness, this._style.extreme.maxColor);
+            this._drawLevelLine(this._minShape, extremeThickness, this._style.extreme.minColor);
         }
     };
     
@@ -146,11 +153,6 @@ var charts = {};
         }
     };
     
-    p._clearChartAndPoints = function() {
-        this._chartShape.graphics.clear();
-        this._pointShape.graphics.clear();
-    };
-    
     p._drawBackgroundShape = function(size, style) {
         var graphics = this._backgroundShape.graphics.clear();
         if (!style.alpha) return;
@@ -189,26 +191,10 @@ var charts = {};
         this._gridShape.alpha = style.alpha;
     };
     
-    p._drawExtremeShape = function(key, maxY, minY, style, offset) {
-        if (!style.alpha) return;
-        if (key !== "") {
-            var graphics = this._extremeShape.graphics.clear();
-            if (minY != this._size.height) {
-                this._drawLevelLine(graphics, maxY, style.thickness, style.maxColor, offset);
-            }
-            if (minY !== 0) {
-                this._drawLevelLine(graphics, minY, style.thickness, style.minColor, offset);
-            }
-        }
-        this._gridShape.alpha = style.alpha;
-    };
-    
-    p._drawLevelLine = function(graphics, y, thickness, color, offset) {
-        graphics.setStrokeStyle(thickness, "butt");
-        graphics.beginStroke(color);
-        y = this._size.height - y * this._point.height;
-        graphics.moveTo(offset, y).lineTo(this._size.width - offset, y);
-        graphics.endStroke();
+    p._drawLevelLine = function(shape, thickness, color) {
+        var graphics = shape.graphics.clear();
+        graphics.setStrokeStyle(thickness, "butt").beginStroke(color);
+        graphics.moveTo(0, 0).lineTo(this._size.width, 0).endStroke();
     };
     
     p._drawMaskShape = function(x, y, width, height) {
@@ -216,6 +202,16 @@ var charts = {};
         this._chartShape.mask = new createjs.Shape();
         this._chartShape.mask.graphics.beginFill("#000000");
         this._chartShape.mask.graphics.drawRect(x, y, width, height);
+    };
+    
+    p._moveExtreme = function() {
+        this._maxShape.y = this._size.height - this._extremeMax.value * this._point.height;
+        this._minShape.y = this._size.height - this._extremeMin.value * this._point.height;
+    };
+    
+    p._clearChartAndPoints = function() {
+        this._chartShape.graphics.clear();
+        this._pointShape.graphics.clear();
     };
     
     //
@@ -227,34 +223,11 @@ var charts = {};
             && y >= 0 && y <= this._size.height;
     };
     
-    p._processExtreme = function(data) {
-        var i = data.length;
-        var age = 0;
-        
-        var ageMax = this._extremeMax.age + data.length;
-        var max = ageMax <= this._widthSegmentsCount ? this._extremeMax.value : Number.MIN_VALUE;
-        
-        var ageMin = this._extremeMin.age + data.length;
-        var min = ageMin <= this._widthSegmentsCount ? this._extremeMin.value : Number.MAX_VALUE;
-        
-        while (i--) {
-            max = Math.max(max, data[i]);
-            min = Math.min(min, data[i]);
-            ageMax = max == data[i] ? age : ageMax;
-            ageMin = min == data[i] ? age : ageMin;
-            age = data.length - i;
-        }
-        
-        var result;
-        result = this._extremeMax.age != ageMax ? "max" : "";
-        result += this._extremeMin.age != ageMin ? "min" : "";
-        
-        this._extremeMax.value = max;
-        this._extremeMax.age = ageMax;
-        this._extremeMin.value = min;
-        this._extremeMin.age = ageMin;
-        
-        return result;
+    p._processExtreme = function(data, length) { //TODO: optimize!
+        this._extremeMax.value = Math.max.apply(Math, data);
+        this._extremeMax.age = 0;
+        this._extremeMin.value = Math.min.apply(Math, data);
+        this._extremeMin.age = 0;
     };
     
     //  ---
