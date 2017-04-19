@@ -5,7 +5,7 @@ var charts = {};
     /**
      * Example of arguments:
      *  size = {width: 1000, height: 400}
-     *  point = {width: 50, height: 1, dynamic: 0.1}
+     *  point = {width: 50, height: 1}
      *  style = {
      *      background: {color: "#000000", alpha: 0.5},
      *      axis: {thickness: 3, color: "#FF0000", alpha: 1},
@@ -177,14 +177,12 @@ var charts = {};
         graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
         if (stepX !== 0) {
           for (var x = stepX; x < this._size.width; x += stepX) {
-              graphics.moveTo(x, 0);
-              graphics.lineTo(x, this._size.height);
+              graphics.moveTo(x, 0).lineTo(x, this._size.height);
           }
         }
         if (stepY !== 0) {
           for (var y = this._size.height - stepY; y > 0; y -= stepY) {
-              graphics.moveTo(0, y);
-              graphics.lineTo(this._size.width, y);
+              graphics.moveTo(0, y).lineTo(this._size.width, y);
           }
         }
         graphics.endStroke();
@@ -198,7 +196,6 @@ var charts = {};
     };
     
     p._drawMaskShape = function(x, y, width, height) {
-        this.mask = null;
         this._chartShape.mask = new createjs.Shape();
         this._chartShape.mask.graphics.beginFill("#000000");
         this._chartShape.mask.graphics.drawRect(x, y, width, height);

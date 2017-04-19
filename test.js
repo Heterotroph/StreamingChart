@@ -37,7 +37,7 @@ function testComponents() {
 
 function createChartA0() {
     var size = {width: window.innerWidth - 50, height: 300};
-    var point = {width: 25, height: 0.3, dynamic: 0.05};
+    var point = {width: 25, height: 0.3};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
@@ -66,7 +66,7 @@ function createChartA0() {
 
 function createChartB0() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
-    var point = {width: 10, height: 0.1, dynamic: 0.1};
+    var point = {width: 10, height: 0.1};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -91,7 +91,7 @@ function createChartB0() {
 
 function createChartB1() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
-    var point = {width: 10, height: 0.1, dynamic: 0.1};
+    var point = {width: 10, height: 0.1};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -116,11 +116,11 @@ function createChartB1() {
 
 function createChartB2() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
-    var point = {width: 10, height: 0.1, dynamic: 0.1};
+    var point = {width: 10, height: 0.1};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
-        grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 2, height: 500, dash: [1, 0]},
+        grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 5, height: 500, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         chart: {thickness: 2, radius: 2, color: "#000000", alpha: 0.8, bounds: "full"}
     };
