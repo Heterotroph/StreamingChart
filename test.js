@@ -27,6 +27,7 @@ function testComponents() {
       			
     stage.addChild(createChartA());
     stage.addChild(createChartB());
+    stage.addChild(createChartBX());
     stage.addChild(createChartC());
       			
     createjs.Ticker.on("tick", function() {
@@ -63,7 +64,7 @@ function createChartA() {
 }
 
 function createChartB() {
-    var size = {width: 1000, height: 100};
+    var size = {width: 470, height: 100};
     var point = {width: 10, height: 0.1, dynamic: 0.1};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
@@ -76,6 +77,31 @@ function createChartB() {
     var chart = new charts.StreamingChart(size, point, style);
     chart.y = 380;
     chart.x = 20;
+    
+    var t = 0;
+    var shift = size.height / point.height / 2;
+    setInterval(function() {
+        chart.append([Math.cos(t) * 600 + shift]);
+        t += 0.33;
+    }, 50);
+    
+    return chart;
+}
+
+function createChartBX() {
+    var size = {width: 470, height: 100};
+    var point = {width: 10, height: 0.1, dynamic: 0.1};
+    var style = {
+        background: {color: "#FF0000", alpha: 0.1},
+        axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
+        grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 2, height: 500, dash: [1, 0]},
+        extreme: {thickness: 1, minColor: "#000000", maxColor: "#FF0000", alpha: 0},
+        chart: {thickness: 2, radius: 2, color: "#000000", alpha: 0.8, bounds: "none"}
+    };
+    
+    var chart = new charts.StreamingChart(size, point, style);
+    chart.y = 380;
+    chart.x = 550;
     
     var t = 0;
     var shift = size.height / point.height / 2;
