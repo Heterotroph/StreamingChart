@@ -36,31 +36,26 @@ function testComponents() {
 }
 
 function createChartA0() {
-    var size = {width: window.innerWidth - 50, height: 400};
-    var point = {width: size.width / 50, height: 0.2};
-    var axis = {offset: 200,  dynamic: 100, calculateDynamic: true};
+    var size = {width: window.innerWidth - 50, height: 300};
+    var point = {width: size.width / 60, height: 0.50};
+    var axis = {offset: 0, dynamic: 10, calculateDynamic: true};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
-        grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 2, height: 100, dash: [5, 5]},
-        extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 1},
+        grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 50, height: 100, dash: [1, 0]},
+        extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         chart: {thickness: 1, radius: 0, color: "#003333", alpha: 0.75, bounds: "full"}
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
     chart.y = 20;
     chart.x = 25;
-    chart.append([400, 600, 400, 300, 500, 400, 500, 600, 400]);
     
+    var t = 0;
     setInterval(function() {
-        if (Math.random() > 0.75) {
-            chart.append([Math.ceil(Math.random() * 1000 - 100)]);
-        } else if (Math.random() > 0.6) {
-            chart.append([Math.ceil(Math.random() * 500 + 300)]);
-        } else {
-            chart.append([Math.ceil(Math.random() * 200 + 500)]);
-        }
-    }, 333);
+        chart.append([Math.sin(t) * Math.abs(Math.cos(t)) * 2500]);
+        t += 0.05;
+    }, 50);
     
     return chart;
 }
@@ -68,7 +63,7 @@ function createChartA0() {
 function createChartB0() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: true};
+    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -78,7 +73,7 @@ function createChartB0() {
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
-    chart.y = 500;
+    chart.y = 450;
     chart.x = 25;
     
     var t = 0;
@@ -94,7 +89,7 @@ function createChartB0() {
 function createChartB1() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: true};
+    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -104,7 +99,7 @@ function createChartB1() {
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
-    chart.y = 500;
+    chart.y = 450;
     chart.x = 50 + (window.innerWidth - 100) / 3;
     
     var t = 0;
@@ -120,7 +115,7 @@ function createChartB1() {
 function createChartB2() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: true};
+    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -130,7 +125,7 @@ function createChartB2() {
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
-    chart.y = 500;
+    chart.y = 450;
     chart.x = 75 + (window.innerWidth - 100) / 3 * 2;
     
     var t = 0;
