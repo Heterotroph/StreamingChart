@@ -6,6 +6,7 @@ var charts = {};
      * Example of arguments:
      *  size = {width: 1000, height: 400}
      *  point = {width: 50, height: 1}
+     *  axis = {offset: 0, dynamic: 0.1}
      *  style = {
      *      background: {color: "#000000", alpha: 0.5},
      *      axis: {thickness: 3, color: "#FF0000", alpha: 1},
@@ -14,7 +15,7 @@ var charts = {};
      *      chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"}
      * }
      */ 
-    function StreamingChart(size, point, style) {
+    function StreamingChart(size, point, axis, style) {
         this.Container_constructor();
         
         //chart points data
@@ -23,6 +24,7 @@ var charts = {};
         //configuration
         this._size = size;
         this._point = point;
+        this._axis = axis;
         this._style = style;
         
         //dynamic values
@@ -100,6 +102,7 @@ var charts = {};
             this._minShape.alpha = this._maxShape.alpha = extremeAlpha;
             this._drawLevelLine(this._maxShape, extremeThickness, this._style.extreme.maxColor);
             this._drawLevelLine(this._minShape, extremeThickness, this._style.extreme.minColor);
+            this._moveExtreme();
         }
     };
     
@@ -111,12 +114,12 @@ var charts = {};
         var mult = this._point.height;
         var aX, aY, bX, bY;
         aX = offsetX;
-        aY = data[0] * mult;
+        aY = this._applyOffset(data[0]) * mult;
         if (!offsetX) this._drawPoint(0, aY, "standart", style);
         this._chartShape.graphics.setStrokeStyle(style.thickness);
         for (var i = 0; i < data.length - 1; i++) {
             bX = offsetX + stepX * (i + 1);
-            bY = data[i + 1] * mult;
+            bY = this._applyOffset(data[i + 1]) * mult;
             this._drawSegment(aX, aY, bX, bY, style);
             this._drawPoint(bX, bY, "standart", style);
             aX = bX;
@@ -202,8 +205,8 @@ var charts = {};
     };
     
     p._moveExtreme = function() {
-        this._maxShape.y = this._size.height - this._extremeMax.value * this._point.height;
-        this._minShape.y = this._size.height - this._extremeMin.value * this._point.height;
+        this._maxShape.y = this._size.height - this._applyOffset(this._extremeMax.value) * this._point.height;
+        this._minShape.y = this._size.height - this._applyOffset(this._extremeMin.value) * this._point.height;
     };
     
     p._clearChartAndPoints = function() {
@@ -215,12 +218,17 @@ var charts = {};
     //  PRIVATE METHODS (UTILS)
     //
     
+    p._applyOffset = function(y) {
+        return y - this._axis.offset;
+    };
+    
     p._isInsideBounds = function(x, y) {
         return x >= 0 && x <= this._size.width
             && y >= 0 && y <= this._size.height;
     };
     
     p._processExtreme = function(data, length) { //TODO: optimize!
+        if (!data.length) return;
         this._extremeMax.value = Math.max.apply(Math, data);
         this._extremeMax.age = 0;
         this._extremeMin.value = Math.min.apply(Math, data);
