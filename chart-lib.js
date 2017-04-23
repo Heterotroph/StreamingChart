@@ -6,7 +6,7 @@ var charts = {};
      * Example of arguments:
      *  size = {width: 1000, height: 400}
      *  point = {width: 50, height: 1}
-     *  axis = {offset: 0, dynamic: 0.1}
+     *  axis = {offset: 0, dynamic: 0, calculateDynamic: false}
      *  style = {
      *      background: {color: "#000000", alpha: 0.5},
      *      axis: {thickness: 3, color: "#FF0000", alpha: 1},
@@ -28,11 +28,14 @@ var charts = {};
         this._style = style;
         
         //dynamic values
-        this._widthSegmentsCount = Math.floor(this._size.width /  this._point.width);
-        this._extremeMax = {value: Number.MIN_VALUE, age: this._widthSegmentsCount};
-        this._extremeMin = {value: Number.MAX_VALUE, age: this._widthSegmentsCount};
+        this._widthCapacity = Math.floor(this._size.width /  this._point.width);
+        this._heightCapacity = Math.floor(this._size.height / this._point.height);
+        this._pointsWidthCapacity = this._widthCapacity + 1;
+        this._extremeMax = {value: Number.MIN_VALUE, age: this._widthCapacity};
+        this._extremeMin = {value: Number.MAX_VALUE, age: this._widthCapacity};
         this._isDrawPoints = false;
         this._axisThicknessDiv2 = 0;
+        this._axisOffset = this._axis.offset;
         
         //views
         this._backgroundShape = this.addChild(new createjs.Shape());
@@ -57,21 +60,31 @@ var charts = {};
         var totalData = this._data.concat(data);
         
         this._processExtreme(totalData, data.length);
+        var isOffsetChanged = this._calculateAxisOffset();
+        if (isOffsetChanged && this._data.length < this._pointsWidthCapacity) {
+            this.clear();
+            this.append(totalData);
+            return;
+        }
+        
         if (totalData.length > 2) this._moveExtreme();
         
-        var offset = totalData.length > this._widthSegmentsCount ? 0 : Math.max(this._data.length - 1, 0);
+        var offset = totalData.length > this._widthCapacity ? 0 : Math.max(this._data.length - 1, 0);
         var offsetX = offset * this._point.width;
-        var lengthData = Math.min(totalData.length - offset, this._widthSegmentsCount + 1);
+        var lengthData = Math.min(totalData.length - offset, this._pointsWidthCapacity);
         data = totalData.slice(-lengthData);
         
-        if (data.length == this._widthSegmentsCount + 1) this._clearChartAndPoints();
+        if (data.length == this._pointsWidthCapacity) this._clearChartAndPoints();
         this._drawChart(offsetX, this._point.width, data, this._style.chart);
-        this._data = totalData.length >= this._widthSegmentsCount + 1 ? totalData.slice(-this._widthSegmentsCount) : totalData;
+        this._data = totalData.length >= this._pointsWidthCapacity ? totalData.slice(-this._widthCapacity) : totalData;
     };
     
     p.clear = function() {
         this._data = [];
-        this._chartShape.graphics.clear();
+        this._clearChartAndPoints();
+        this._extremeMax = {value: Number.MIN_VALUE, age: this._widthCapacity};
+        this._extremeMin = {value: Number.MAX_VALUE, age: this._widthCapacity};
+        this._moveExtreme();
     };
     
     p.setStyle = function(style) {
@@ -207,6 +220,8 @@ var charts = {};
     p._moveExtreme = function() {
         this._maxShape.y = this._size.height - this._applyOffset(this._extremeMax.value) * this._point.height;
         this._minShape.y = this._size.height - this._applyOffset(this._extremeMin.value) * this._point.height;
+        this._maxShape.visible = this._isInsideBounds(0, this._maxShape.y);
+        this._minShape.visible = this._isInsideBounds(0, this._minShape.y);
     };
     
     p._clearChartAndPoints = function() {
@@ -218,8 +233,20 @@ var charts = {};
     //  PRIVATE METHODS (UTILS)
     //
     
+    p._calculateAxisOffset = function() {
+        var tempOffset = this._extremeMin.value - this._axis.dynamic;
+        if (tempOffset > this._axisOffset) tempOffset = this._axis.offset;
+        var result = this._axisOffset != tempOffset;
+        this._axisOffset = tempOffset;
+        return result;
+    };
+    
+    p._calculatePointHeight = function() {
+        
+    };
+    
     p._applyOffset = function(y) {
-        return y - this._axis.offset;
+        return y - this._axisOffset;
     };
     
     p._isInsideBounds = function(x, y) {
