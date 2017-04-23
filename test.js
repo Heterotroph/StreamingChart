@@ -42,7 +42,7 @@ function createChartA0() {
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
-        grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 50, height: 100, dash: [1, 0]},
+        grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 10, height: 100, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         chart: {thickness: 1, radius: 0, color: "#003333", alpha: 0.75, bounds: "full"}
     };
