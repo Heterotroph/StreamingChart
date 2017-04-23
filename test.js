@@ -26,10 +26,9 @@ function testComponents() {
     stage.enableMouseOver();
       			
     stage.addChild(createChartA0());
-    //stage.addChild(createChartA1());
-    //stage.addChild(createChartB0());
-    //stage.addChild(createChartB1());
-    //stage.addChild(createChartB2());
+    stage.addChild(createChartB0());
+    stage.addChild(createChartB1());
+    stage.addChild(createChartB2());
       			
     createjs.Ticker.on("tick", function() {
         stage.update();
@@ -69,7 +68,7 @@ function createChartA0() {
 function createChartB0() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
+    var axis = {offset: 0,  dynamic: 0, calculateDynamic: true};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -79,7 +78,7 @@ function createChartB0() {
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
-    chart.y = 400;
+    chart.y = 500;
     chart.x = 25;
     
     var t = 0;
@@ -95,7 +94,7 @@ function createChartB0() {
 function createChartB1() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
+    var axis = {offset: 0,  dynamic: 0, calculateDynamic: true};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -105,7 +104,7 @@ function createChartB1() {
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
-    chart.y = 400;
+    chart.y = 500;
     chart.x = 50 + (window.innerWidth - 100) / 3;
     
     var t = 0;
@@ -121,7 +120,7 @@ function createChartB1() {
 function createChartB2() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
+    var axis = {offset: 0,  dynamic: 0, calculateDynamic: true};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -131,7 +130,7 @@ function createChartB2() {
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
-    chart.y = 400;
+    chart.y = 500;
     chart.x = 75 + (window.innerWidth - 100) / 3 * 2;
     
     var t = 0;
