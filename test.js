@@ -37,8 +37,8 @@ function testComponents() {
 
 function createChartA0() {
     var size = {width: window.innerWidth - 50, height: 300};
-    var point = {width: size.width / 60, height: 0.50};
-    var axis = {offset: 0, dynamic: 10, calculateDynamic: true};
+    var point = {width: size.width / 120, height: 0.50};
+    var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 50, bottom: 0}};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
@@ -54,7 +54,7 @@ function createChartA0() {
     var t = 0;
     setInterval(function() {
         chart.append([Math.sin(t) * Math.abs(Math.cos(t)) * 2500]);
-        t += 0.05;
+        t += 0.025;
     }, 50);
     
     return chart;
@@ -63,7 +63,7 @@ function createChartA0() {
 function createChartB0() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
+    var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -81,7 +81,7 @@ function createChartB0() {
     setInterval(function() {
         chart.append([Math.cos(t) * 600 + shift]);
         t += 0.33;
-    }, 50);
+    }, 100);
     
     return chart;
 }
@@ -89,7 +89,7 @@ function createChartB0() {
 function createChartB1() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
+    var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -107,7 +107,7 @@ function createChartB1() {
     setInterval(function() {
         chart.append([Math.cos(t) * 600 + shift]);
         t += 0.33;
-    }, 50);
+    }, 100);
     
     return chart;
 }
@@ -115,7 +115,7 @@ function createChartB1() {
 function createChartB2() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0,  dynamic: 0, calculateDynamic: false};
+    var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
@@ -133,7 +133,7 @@ function createChartB2() {
     setInterval(function() {
         chart.append([Math.cos(t) * 600 + shift]);
         t += 0.33;
-    }, 50);
+    }, 100);
     
     return chart;
 }
