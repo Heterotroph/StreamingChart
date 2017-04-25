@@ -70,14 +70,14 @@ function createChartA0(text) {
 function createChartB0() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
+    var axis = {offset: 50, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
-        axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
-        grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 2, height: 200, dash: [1, 0]},
+        axis: {thickness: 1, color: "#FF0000", alpha: 0.8},
+        grid: {thickness: 10, color: "#FF0000", alpha: 0.5, width: 0, height: 200, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
-        chart: {thickness: 2, radius: 2, color: "#000000", alpha: 0.8, bounds: "none"}
+        chart: {thickness: 2, radius: 0, color: "#000000", alpha: 0.8, bounds: "none"}
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
@@ -87,8 +87,8 @@ function createChartB0() {
     var t = 0;
     var shift = size.height / point.height / 2;
     setInterval(function() {
-        chart.append([Math.cos(t) * 600 + shift]);
-        t += 0.33;
+        chart.append([Math.cos(t) * 420 + shift]);
+        t += 0.20;
     }, 100);
     
     return chart;
