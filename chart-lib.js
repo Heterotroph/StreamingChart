@@ -12,6 +12,7 @@ var charts = {};
      *      axis: {thickness: 3, color: "#FF0000", alpha: 1},
      *      grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
      *      extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 1},
+     *      zero:  {thickness: 1, color: "#000000", alpha: 1},
      *      chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"}
      * }
      */ 
@@ -32,16 +33,17 @@ var charts = {};
         this._widthCapacity = Math.floor(this._size.width /  this._point.width);
         this._heightCapacity = Math.floor(this._size.height / this._pointHeight);
         this._pointsWidthCapacity = this._widthCapacity + 1;
-        this._extremeMax = {value: Number.MIN_VALUE, age: this._widthCapacity};
+        this._axisOffset = this._axis.offset;
+        this._extremeMax = {value: -Number.MAX_VALUE, age: this._widthCapacity};
         this._extremeMin = {value: Number.MAX_VALUE, age: this._widthCapacity};
         this._isDrawPoints = false;
-        this._axisOffset = this._axis.offset;
         
         //views
         this._backgroundShape = this.addChild(new createjs.Shape());
         this._gridShape = this.addChild(new createjs.Shape());
         this._maxShape = this.addChild(new createjs.Shape());
         this._minShape = this.addChild(new createjs.Shape());
+        this._zeroShape = this.addChild(new createjs.Shape());
         this._axisShape = this.addChild(new createjs.Shape());
         this._chartShape = this.addChild(new createjs.Shape());
         this._pointShape = this.addChild(new createjs.Shape());
@@ -69,6 +71,7 @@ var charts = {};
                 this._data = [];
                 this._clearChartAndPoints();
                 this._updateGrid(this._style.grid);
+                this._moveZero();
             }
         }
         
@@ -87,9 +90,10 @@ var charts = {};
     p.clear = function() {
         this._data = [];
         this._clearChartAndPoints();
-        this._extremeMax = {value: Number.MIN_VALUE, age: this._widthCapacity};
+        this._extremeMax = {value: -Number.MAX_VALUE, age: this._widthCapacity};
         this._extremeMin = {value: Number.MAX_VALUE, age: this._widthCapacity};
         this._moveExtreme();
+        this._moveZero();
     };
     
     p.setStyle = function(style) {
@@ -101,7 +105,8 @@ var charts = {};
         this._drawBackgroundShape(this._size, this._style.background);
         this._drawAxisShape(this._size, this._style.axis);
         this._updateGrid(this._style.grid);
-        this._updateExtreme(this._style.extreme);
+        this._drawExtreme(this._style.extreme);
+        this._drawZero(this._style.zero);
         
         var boundsKey = this._style.chart.bounds;
         this._isDrawPoints = boundsKey == "points" || boundsKey == "full";
@@ -111,22 +116,29 @@ var charts = {};
         this._drawMaskShape(maskOffset, 0, this._size.width - maskOffset, this._size.height - maskOffset);
     };
     
+    p._getAxisOffset = function() {
+        return this._axisOffset;
+    };
+    
+    p._getPointHeight = function() {
+        return this._pointHeight;
+    };
+    
     //
     //  PRIVATE METHODS (VIEW)
     //
     
     p._drawChart = function(offsetX, stepX, data, style) {
-        var mult = this._pointHeight;
         var aX, aY, bX, bY;
         aX = offsetX;
-        aY = this._applyOffset(data[0]) * mult;
-        if (!offsetX) this._drawPoint(0, aY, "standart", style);
+        aY = this._applyOffset(data[0]) * this._pointHeight;
+        if (!offsetX) this._drawPoint(0, aY, style);
         this._chartShape.graphics.setStrokeStyle(style.thickness);
         for (var i = 0; i < data.length - 1; i++) {
             bX = offsetX + stepX * (i + 1);
-            bY = this._applyOffset(data[i + 1]) * mult;
+            bY = this._applyOffset(data[i + 1]) * this._pointHeight;
             this._drawSegment(aX, aY, bX, bY, style);
-            this._drawPoint(bX, bY, "standart", style);
+            this._drawPoint(bX, bY, style);
             aX = bX;
             aY = bY;
         }
@@ -140,25 +152,13 @@ var charts = {};
         graphics.moveTo(aX, this._size.height - aY).lineTo(bX, this._size.height - bY);
     };
     
-    p._drawPoint = function(x, y, type, style) {
+    p._drawPoint = function(x, y, style) {
         var graphics = this._pointShape.graphics;
         if (!style.radius) return;
         if (!this._isDrawPoints && !this._isInsideBounds(x, y)) return;
-        switch(type) {
-        case "selected":
-            graphics.setStrokeStyle(style.thickness, "round");
-            graphics.beginStroke(style.color);
-            graphics.drawCircle(x, this._size.height - y, style.radius);
-            graphics.endStroke();
-            break;
-        case "standart":
-            graphics.beginFill(style.color);
-            graphics.drawCircle(x, this._size.height - y, style.radius);
-            graphics.endFill();
-            break;
-        default:
-            break;
-        }
+        graphics.beginFill(style.color);
+        graphics.drawCircle(x, this._size.height - y, style.radius);
+        graphics.endFill();
     };
     
     p._drawBackgroundShape = function(size, style) {
@@ -189,14 +189,14 @@ var charts = {};
         if (!style.alpha) return;
         graphics.setStrokeDash(style.dash);
         graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
-        if (stepX !== 0) {
+        if (stepX) {
             for (var x = stepX; x < this._size.width; x += stepX) {
                 graphics.moveTo(x, 0).lineTo(x, this._size.height);
             }
         }
-        var gridOffset = (this._axisOffset * this._pointHeight) % stepY;
-        gridOffset += stepY;
-        if (stepY !== 0) {
+        var gridOffset = (-this._axisOffset * this._pointHeight) % stepY;
+        gridOffset = gridOffset < 0 ? gridOffset + stepY : gridOffset;
+        if (stepY) {
             for (var y = this._size.height - gridOffset; y > 0; y -= stepY) {
                 graphics.moveTo(0, y).lineTo(this._size.width, y);
             }
@@ -217,15 +217,24 @@ var charts = {};
         this._chartShape.mask.graphics.drawRect(x, y, width, height);
     };
     
-    p._updateExtreme = function(style) {
-        var extremeAlpha = style.alpha;
-        var extremeThickness = style.thickness;
-        if (extremeAlpha) {
-            this._minShape.alpha = this._maxShape.alpha = extremeAlpha;
-            this._drawLevelLine(this._maxShape, extremeThickness, style.maxColor);
-            this._drawLevelLine(this._minShape, extremeThickness, style.minColor);
-            this._moveExtreme();
-        }
+    p._drawZero = function(style) {
+        if (!style.alpha) return;
+        this._zeroShape.alpha = style.alpha;
+        this._drawLevelLine(this._zeroShape, style.thickness, style.color);
+        this._moveZero();
+    };
+    
+    p._moveZero = function() {
+        this._zeroShape.y = this._size.height - this._applyOffset(0) * this._pointHeight;
+        this._zeroShape.visible = this._isInsideBounds(0, this._zeroShape.y);
+    };
+    
+    p._drawExtreme = function(style) {
+        if (!style.alpha) return;
+        this._minShape.alpha = this._maxShape.alpha = style.alpha;
+        this._drawLevelLine(this._maxShape, style.thickness, style.maxColor);
+        this._drawLevelLine(this._minShape, style.thickness, style.minColor);
+        this._moveExtreme();
     };
     
     p._moveExtreme = function() {
@@ -254,7 +263,7 @@ var charts = {};
     
     p._calculatePointHeight = function() {
         var newPointHeight = this._pointHeight;
-        newPointHeight *= this._heightCapacity / this._applyOffset(this._extremeMax.value + this._axis.dynamicSpace.bottom);
+        newPointHeight *= this._heightCapacity / this._applyOffset(this._extremeMax.value + this._axis.dynamicSpace.top);
         newPointHeight = Math.min(newPointHeight, this._point.height);
         if (newPointHeight < this._point.height) {
             this._heightCapacity = Math.floor(this._size.height / newPointHeight);
