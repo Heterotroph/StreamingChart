@@ -58,10 +58,15 @@ function createChartA0(text) {
     chart.x = 25;
     
     var t = 0;
+    var vars;
+    var extr;
     setInterval(function() {
         chart.append([Math.sin(t) * Math.abs(Math.sin(t)) * 2500]);
         t += 0.100;
-        text.text = chart._getAxisOffset().toFixed(3) + " " + chart._getPointHeight().toFixed(3);
+        vars = chart.d_getAxisOffset().toFixed(3) + " " + chart.d_getPointHeight().toFixed(3);
+        extr = chart.d_getExtreme();
+        vars += "   " + extr.max.toFixed(3) + " " + extr.min.toFixed(3) + "   " + chart.d_getData().length;
+        text.text = vars;
     }, 50);
     
     return chart;

@@ -60,31 +60,13 @@ var charts = {};
     
     p.append = function(data) {
         var totalData = this._data.concat(data);
+        this._data = totalData.slice(-this._pointsWidthCapacity);
         
-        this._processExtreme(totalData, data.length);
-        if (this._axis.isDynamic) {
-            var fullRedraw = this._data.length < this._pointsWidthCapacity;
-            fullRedraw = fullRedraw && this._calculateAxisOffset();
-            var temp = this._calculatePointHeight();
-            fullRedraw = fullRedraw || temp;
-            if (fullRedraw) {
-                this._data = [];
-                this._clearChartAndPoints();
-                this._updateGrid(this._style.grid);
-                this._moveZero();
-            }
-        }
+        this._searchExtreme();
+        this._processExtreme();
         
-        if (totalData.length > 2) this._moveExtreme();
-        
-        var offset = totalData.length > this._widthCapacity ? 0 : Math.max(this._data.length - 1, 0);
-        var offsetX = offset * this._point.width;
-        var lengthData = Math.min(totalData.length - offset, this._pointsWidthCapacity);
-        data = totalData.slice(-lengthData);
-        
-        if (data.length == this._pointsWidthCapacity) this._clearChartAndPoints();
-        this._drawChart(offsetX, this._point.width, data, this._style.chart);
-        this._data = totalData.length >= this._pointsWidthCapacity ? totalData.slice(-this._widthCapacity) : totalData;
+        this._clearChartAndPoints();
+        this._drawChart(0, this._point.width, this._data, this._style.chart);
     };
     
     p.clear = function() {
@@ -116,12 +98,20 @@ var charts = {};
         this._drawMaskShape(maskOffset, 0, this._size.width - maskOffset, this._size.height - maskOffset);
     };
     
-    p._getAxisOffset = function() {
+    p.d_getAxisOffset = function() {
         return this._axisOffset;
     };
     
-    p._getPointHeight = function() {
+    p.d_getPointHeight = function() {
         return this._pointHeight;
+    };
+    
+    p.d_getExtreme = function() {
+        return {max: this._extremeMax.value, min: this._extremeMin.value};
+    };
+    
+    p.d_getData = function() {
+        return this._data;
     };
     
     //
@@ -229,6 +219,16 @@ var charts = {};
         this._zeroShape.visible = this._isInsideBounds(0, this._zeroShape.y);
     };
     
+    p._processExtreme = function() {
+        if (this._data.length > 2) this._moveExtreme();
+        //if (!this._axis.isDynamic) return;
+        var isAxisOffsetChanged = this._calculateAxisOffset();
+        var isPointHeightChanged = this._calculatePointHeight();
+        //if (!isAxisOffsetChanged && !isPointHeightChanged) return;
+        this._updateGrid(this._style.grid);
+        this._moveZero();
+    };
+    
     p._drawExtreme = function(style) {
         if (!style.alpha) return;
         this._minShape.alpha = this._maxShape.alpha = style.alpha;
@@ -282,11 +282,11 @@ var charts = {};
             && y >= 0 && y <= this._size.height;
     };
     
-    p._processExtreme = function(data, length) { //TODO: optimize!
-        if (!data.length) return;
-        this._extremeMax.value = Math.max.apply(Math, data);
+    p._searchExtreme = function() { //TODO: optimize!
+        if (!this._data.length) return;
+        this._extremeMax.value = Math.max.apply(Math, this._data);
         this._extremeMax.age = 0;
-        this._extremeMin.value = Math.min.apply(Math, data);
+        this._extremeMin.value = Math.min.apply(Math, this._data);
         this._extremeMin.age = 0;
     };
     
