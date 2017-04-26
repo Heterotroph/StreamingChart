@@ -62,7 +62,7 @@ var charts = {};
         var totalData = this._data.concat(data);
         this._data = totalData.slice(-this._pointsWidthCapacity);
         
-        this._searchExtreme();
+        this._searchExtreme(data);
         this._processExtreme();
         
         this._clearChartAndPoints();
@@ -123,7 +123,7 @@ var charts = {};
         aX = offsetX;
         aY = this._applyOffset(data[0]) * this._pointHeight;
         if (!offsetX) this._drawPoint(0, aY, style);
-        this._chartShape.graphics.setStrokeStyle(style.thickness);
+        this._chartShape.graphics.setStrokeStyle(style.thickness).beginStroke(style.color);
         for (var i = 0; i < data.length - 1; i++) {
             bX = offsetX + stepX * (i + 1);
             bY = this._applyOffset(data[i + 1]) * this._pointHeight;
@@ -137,8 +137,6 @@ var charts = {};
     
     p._drawSegment = function(aX, aY, bX, bY, style) {
         var graphics = this._chartShape.graphics;
-        
-        graphics.beginStroke(style.color);
         graphics.moveTo(aX, this._size.height - aY).lineTo(bX, this._size.height - bY);
     };
     
@@ -282,12 +280,31 @@ var charts = {};
             && y >= 0 && y <= this._size.height;
     };
     
-    p._searchExtreme = function() { //TODO: optimize!
-        if (!this._data.length) return;
-        this._extremeMax.value = Math.max.apply(Math, this._data);
-        this._extremeMax.age = 0;
-        this._extremeMin.value = Math.min.apply(Math, this._data);
-        this._extremeMin.age = 0;
+    p._searchExtreme = function(data) { //TODO: optimize!
+        var newExtreme;
+        this._extremeMax.age += data.length;
+        this._extremeMin.age += data.length;
+        var isOld = this._extremeMax.age >= this._pointsWidthCapacity;
+        isOld = isOld || this._extremeMin.age >= this._pointsWidthCapacity;
+        if (isOld || !data.length) {
+            newExtreme = this._getExtreme(Number.MAX_VALUE, -Number.MAX_VALUE, this._data);
+        } else {
+            newExtreme = this._getExtreme(this._extremeMin.value, this._extremeMax.value, data);
+        }
+        this._extremeMin = newExtreme[0];
+        this._extremeMax = newExtreme[1];
+    };
+    
+    p._getExtreme = function(min, max, data) {
+        var currentMax = {value: max, age: this._pointsWidthCapacity};
+        var currentMin = {value: min, age: this._pointsWidthCapacity};
+        for (var i = 0; i < data.length; i++) {
+            currentMax.value = Math.max(currentMax.value, data[i]);
+            if (currentMax.value == data[i]) currentMax.age = data.length - i - 1;
+            currentMin.value = Math.min(currentMin.value, data[i]);
+            if (currentMin.value == data[i]) currentMin.age = data.length - i - 1;
+        }
+        return [currentMin, currentMax];
     };
     
     //  ---

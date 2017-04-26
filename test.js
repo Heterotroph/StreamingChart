@@ -42,7 +42,7 @@ function testComponents() {
 
 function createChartA0(text) {
     var size = {width: window.innerWidth - 50, height: 300};
-    var point = {width: size.width / 35, height: 0.20};
+    var point = {width: size.width / 70, height: 0.20};
     var axis = {offset: 50, isDynamic: true, dynamicSpace: {top: 50, bottom: 0}};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
@@ -61,8 +61,12 @@ function createChartA0(text) {
     var vars;
     var extr;
     setInterval(function() {
-        chart.append([Math.sin(t) * Math.abs(Math.sin(t)) * 2500]);
-        t += 0.100;
+        var data = [];
+        for (var i = 0; i < 1; i++) {
+            data.push(Math.sin(t) * Math.abs(Math.sin(t)) * 2500);
+            t += 0.050;
+        }
+        chart.append(data);
         vars = chart.d_getAxisOffset().toFixed(3) + " " + chart.d_getPointHeight().toFixed(3);
         extr = chart.d_getExtreme();
         vars += "   " + extr.max.toFixed(3) + " " + extr.min.toFixed(3) + "   " + chart.d_getData().length;
