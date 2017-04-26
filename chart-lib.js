@@ -221,10 +221,10 @@ var charts = {};
     
     p._processExtreme = function() {
         if (this._data.length > 2) this._moveExtreme();
-        //if (!this._axis.isDynamic) return;
+        if (!this._axis.isDynamic) return;
         var isAxisOffsetChanged = this._calculateAxisOffset();
         var isPointHeightChanged = this._calculatePointHeight();
-        //if (!isAxisOffsetChanged && !isPointHeightChanged) return;
+        if (!isAxisOffsetChanged && !isPointHeightChanged) return;
         this._updateGrid(this._style.grid);
         this._moveZero();
     };
