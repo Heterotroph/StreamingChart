@@ -253,7 +253,7 @@ var charts = {};
     
     p._calculateAxisOffset = function() {
         var tempOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom;
-        tempOffset = Math.min(tempOffset, this._axis.offset);
+        //tempOffset = Math.min(tempOffset, this._axis.offset);
         var result = this._axisOffset != tempOffset;
         this._axisOffset = tempOffset;
         return result;
