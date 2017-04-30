@@ -10,7 +10,6 @@ var charts = {};
      *  style = {
      *      background: {color: "#000000", alpha: 0.5},
      *      grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
-     *      extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 1},
      *      zero:  {thickness: 1, color: "#000000", alpha: 1},
      *      chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"}
      * }
@@ -40,8 +39,6 @@ var charts = {};
         //views
         this._backgroundShape = this.addChild(new createjs.Shape());
         this._gridShape = this.addChild(new createjs.Shape());
-        this._maxShape = this.addChild(new createjs.Shape());
-        this._minShape = this.addChild(new createjs.Shape());
         this._zeroShape = this.addChild(new createjs.Shape());
         this._chartShape = this.addChild(new createjs.Shape());
         this._pointShape = this.addChild(new createjs.Shape());
@@ -72,7 +69,6 @@ var charts = {};
         this._clearChartAndPoints();
         this._extremeMax = {value: -Number.MAX_VALUE, age: this._widthCapacity};
         this._extremeMin = {value: Number.MAX_VALUE, age: this._widthCapacity};
-        this._moveExtreme();
         this._moveZero();
     };
     
@@ -84,7 +80,6 @@ var charts = {};
     p.updateStyle = function() {
         this._drawBackgroundShape(this._size, this._style.background);
         this._updateGrid(this._style.grid);
-        this._drawExtreme(this._style.extreme);
         this._drawZero(this._style.zero);
         
         var boundsKey = this._style.chart.bounds;
@@ -205,28 +200,12 @@ var charts = {};
     };
     
     p._processExtreme = function() {
-        if (this._data.length > 2) this._moveExtreme();
         if (!this._axis.isDynamic) return;
         var isAxisOffsetChanged = this._calculateAxisOffset();
         var isPointHeightChanged = this._calculatePointHeight();
         if (!isAxisOffsetChanged && !isPointHeightChanged) return;
         this._updateGrid(this._style.grid);
         this._moveZero();
-    };
-    
-    p._drawExtreme = function(style) {
-        if (!style.alpha) return;
-        this._minShape.alpha = this._maxShape.alpha = style.alpha;
-        this._drawLevelLine(this._maxShape, style.thickness, style.maxColor);
-        this._drawLevelLine(this._minShape, style.thickness, style.minColor);
-        this._moveExtreme();
-    };
-    
-    p._moveExtreme = function() {
-        this._maxShape.y = this._size.height - this._applyOffset(this._extremeMax.value) * this._pointHeight;
-        this._minShape.y = this._size.height - this._applyOffset(this._extremeMin.value) * this._pointHeight;
-        this._maxShape.visible = this._isInsideBounds(0, this._maxShape.y);
-        this._minShape.visible = this._isInsideBounds(0, this._minShape.y);
     };
     
     p._clearChartAndPoints = function() {
