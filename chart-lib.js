@@ -253,7 +253,6 @@ var charts = {};
     
     p._calculateAxisOffset = function() {
         var tempOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom;
-        //tempOffset = Math.min(tempOffset, this._axis.offset);
         var result = this._axisOffset != tempOffset;
         this._axisOffset = tempOffset;
         return result;
@@ -261,11 +260,9 @@ var charts = {};
     
     p._calculatePointHeight = function() {
         var newPointHeight = this._pointHeight;
-        newPointHeight *= this._heightCapacity / this._applyOffset(this._extremeMax.value + this._axis.dynamicSpace.top);
-        newPointHeight = Math.min(newPointHeight, this._point.height);
-        if (newPointHeight < this._point.height) {
-            this._heightCapacity = Math.floor(this._size.height / newPointHeight);
-        }
+        newPointHeight = this._size.height / this._applyOffset(this._extremeMax.value + this._axis.dynamicSpace.top);
+        newPointHeight = Math.min(newPointHeight, this._size.height);
+        this._heightCapacity = Math.floor(this._size.height / newPointHeight);
         var result = this._pointHeight != newPointHeight;
         this._pointHeight = newPointHeight;
         return result;
