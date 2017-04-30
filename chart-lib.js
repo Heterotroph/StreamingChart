@@ -9,7 +9,6 @@ var charts = {};
      *  axis = {offset: 0, dynamicSpace: {top: 10, bottom: 0}, isDynamic: false}
      *  style = {
      *      background: {color: "#000000", alpha: 0.5},
-     *      axis: {thickness: 3, color: "#FF0000", alpha: 1},
      *      grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
      *      extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 1},
      *      zero:  {thickness: 1, color: "#000000", alpha: 1},
@@ -44,7 +43,6 @@ var charts = {};
         this._maxShape = this.addChild(new createjs.Shape());
         this._minShape = this.addChild(new createjs.Shape());
         this._zeroShape = this.addChild(new createjs.Shape());
-        this._axisShape = this.addChild(new createjs.Shape());
         this._chartShape = this.addChild(new createjs.Shape());
         this._pointShape = this.addChild(new createjs.Shape());
         
@@ -85,7 +83,6 @@ var charts = {};
     
     p.updateStyle = function() {
         this._drawBackgroundShape(this._size, this._style.background);
-        this._drawAxisShape(this._size, this._style.axis);
         this._updateGrid(this._style.grid);
         this._drawExtreme(this._style.extreme);
         this._drawZero(this._style.zero);
@@ -93,9 +90,8 @@ var charts = {};
         var boundsKey = this._style.chart.bounds;
         this._isDrawPoints = boundsKey == "points" || boundsKey == "full";
         var isMaskDisplay = boundsKey != "chart" && boundsKey != "full";
-        var maskOffset = this._style.axis.thickness / 2;
         if (!isMaskDisplay) return;
-        this._drawMaskShape(maskOffset, 0, this._size.width - maskOffset, this._size.height - maskOffset);
+        this._drawMaskShape(0, 0, this._size.width, this._size.height);
     };
     
     p.d_getAxisOffset = function() {
@@ -155,15 +151,6 @@ var charts = {};
         graphics.beginFill(style.color);
         graphics.drawRoundRect(0, 0, size.width, size.height, 3);
         this._backgroundShape.alpha = style.alpha;
-    };
-    
-    p._drawAxisShape = function(size, style) {
-        var graphics = this._axisShape.graphics.clear();
-        if (!style.alpha) return;
-        graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
-        graphics.moveTo(0, 0).lineTo(0, size.height).lineTo(size.width, size.height);
-        graphics.endStroke();
-        this._axisShape.alpha = style.alpha;
     };
     
     p._updateGrid = function(style) {

@@ -31,9 +31,9 @@ function testComponents() {
     stage.addChild(text);
     			
     stage.addChild(createChartA0(text));
-    //stage.addChild(createChartB0());
-    //stage.addChild(createChartB1());
-    //stage.addChild(createChartB2());
+    stage.addChild(createChartB0());
+    stage.addChild(createChartB1());
+    stage.addChild(createChartB2());
     
     createjs.Ticker.on("tick", function() {
         stage.update();
@@ -46,7 +46,6 @@ function createChartA0(text) {
     var axis = {offset: 50, isDynamic: true, dynamicSpace: {top: 50, bottom: 0}};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
-        axis: {thickness: 3, color: "#00FFFF", alpha: 0.75},
         grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 5, height: 300, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#00FFFF", alpha: 0.75},
@@ -82,7 +81,6 @@ function createChartB0() {
     var axis = {offset: 50, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
-        axis: {thickness: 1, color: "#FF0000", alpha: 0.8},
         grid: {thickness: 10, color: "#FF0000", alpha: 0.5, width: 0, height: 200, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
@@ -109,7 +107,6 @@ function createChartB1() {
     var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
-        axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
         grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 2, height: 500, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
@@ -136,7 +133,6 @@ function createChartB2() {
     var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
-        axis: {thickness: 4, color: "#FF0000", alpha: 0.8},
         grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 5, height: 500, dash: [1, 0]},
         extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
