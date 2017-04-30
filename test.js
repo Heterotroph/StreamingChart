@@ -25,12 +25,7 @@ function testComponents() {
     var stage = new createjs.Stage("c");
     stage.enableMouseOver();
     
-    var text = new createjs.Text("...", "20px Courier");
-    text.x = 25;
-    text.y = 25;
-    stage.addChild(text);
-    			
-    stage.addChild(createChartA0(text));
+    stage.addChild(createChartA0());
     stage.addChild(createChartB0());
     stage.addChild(createChartB1());
     stage.addChild(createChartB2());
@@ -40,7 +35,7 @@ function testComponents() {
     });
 }
 
-function createChartA0(text) {
+function createChartA0() {
     var size = {width: window.innerWidth - 50, height: 300};
     var point = {width: size.width / 70, height: 0.20};
     var axis = {offset: 50, isDynamic: true, dynamicSpace: {top: 50, bottom: 0}};
@@ -66,10 +61,6 @@ function createChartA0(text) {
             t += 0.050;
         }
         chart.append(data);
-        vars = chart.d_getAxisOffset().toFixed(3) + " " + chart.d_getPointHeight().toFixed(3);
-        extr = chart.d_getExtreme();
-        vars += "   " + extr.max.toFixed(3) + " " + extr.min.toFixed(3) + "   " + chart.d_getData().length;
-        text.text = vars;
     }, 50);
     
     return chart;

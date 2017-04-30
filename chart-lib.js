@@ -89,22 +89,6 @@ var charts = {};
         this._drawMaskShape(0, 0, this._size.width, this._size.height);
     };
     
-    p.d_getAxisOffset = function() {
-        return this._axisOffset;
-    };
-    
-    p.d_getPointHeight = function() {
-        return this._pointHeight;
-    };
-    
-    p.d_getExtreme = function() {
-        return {max: this._extremeMax.value, min: this._extremeMin.value};
-    };
-    
-    p.d_getData = function() {
-        return this._data;
-    };
-    
     //
     //  PRIVATE METHODS (VIEW)
     //

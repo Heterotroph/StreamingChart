@@ -8,7 +8,6 @@ html, body {
     background-color: #ffffff;
 }
 .canvas {
-    position: absolute;
     left: 0px;
     top: 0px;
 }
