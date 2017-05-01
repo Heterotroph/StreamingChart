@@ -38,13 +38,16 @@ function testComponents() {
 function createChartA0() {
     var size = {width: window.innerWidth - 50, height: 300};
     var point = {width: size.width / 70, height: 0.20};
-    var axis = {offset: 50, isDynamic: true, dynamicSpace: {top: 50, bottom: 0}};
+    var axis = {offset: 50, isDynamic: true, dynamicSpace: {top: 50, bottom: 50}};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 5, height: 300, dash: [1, 0]},
-        extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#00FFFF", alpha: 0.75},
-        chart: {thickness: 1, radius: 0, color: "#003333", alpha: 0.75, bounds: "full"}
+        chart: {
+            lines: {thickness: 1, color: "#003333", alpha: 0.75, bounds: true},
+            points:  {thickness: 0, radius: 0, lineColor: "#000000", fillColor: "#FF0000", alpha: 0, bounds: false}
+        }
+        
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
@@ -69,13 +72,15 @@ function createChartA0() {
 function createChartB0() {
     var size = {width: (window.innerWidth - 100) / 3, height: 100};
     var point = {width: 10, height: 0.1};
-    var axis = {offset: 50, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
+    var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
-        grid: {thickness: 10, color: "#FF0000", alpha: 0.5, width: 0, height: 200, dash: [1, 0]},
-        extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
+        grid: {thickness: 10, color: "#FFFFFF", alpha: 1, width: 0, height: 200, dash: [1, 0]},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
-        chart: {thickness: 2, radius: 0, color: "#000000", alpha: 0.8, bounds: "none"}
+        chart: {
+            lines: {thickness: 2, color: "#000000", alpha: 0.8, bounds: true},
+            points:  {thickness: 0, radius: 0, lineColor: "#000000", fillColor: "#FF0000", alpha: 1, bounds: true}
+        }
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
@@ -99,9 +104,11 @@ function createChartB1() {
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 2, height: 500, dash: [1, 0]},
-        extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
-        chart: {thickness: 2, radius: 2, color: "#000000", alpha: 0.8, bounds: "points"}
+        chart: {
+            lines: {thickness: 2, color: "#000000", alpha: 0.8, bounds: true},
+            points:  {thickness: 2, radius: 2, lineColor: "#000000", fillColor: "#FF0000", alpha: 1, bounds: false}
+        }
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
@@ -125,9 +132,11 @@ function createChartB2() {
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         grid: {thickness: 0.1, color: "#FF0000", alpha: 0.5, width: 5, height: 500, dash: [1, 0]},
-        extreme: {thickness: 1, maxColor: "#FF0000", minColor: "#000000", alpha: 0},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
-        chart: {thickness: 2, radius: 2, color: "#000000", alpha: 0.8, bounds: "full"}
+        chart: {
+            lines: {thickness: 2, color: "#000000", alpha: 0.8, bounds: true},
+            points:  {thickness: 2, radius: 2, lineColor: "#000000", fillColor: "#FF0000", alpha: 1, bounds: true}
+        }
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);

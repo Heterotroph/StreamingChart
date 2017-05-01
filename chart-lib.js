@@ -11,8 +11,11 @@ var charts = {};
      *      background: {color: "#000000", alpha: 0.5},
      *      grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
      *      zero:  {thickness: 1, color: "#000000", alpha: 1},
-     *      chart: {thickness: 3, radius: 4, color: "#000000", alpha: 0.8, bounds: "full"}
-     * }
+     *      chart: {
+     *          lines: {thickness: 3, color: "#000000", alpha: 0.8, bounds: true},
+     *          points:  {thickness: 3, radius: 2, lineColor: "#0000FF", fillColor: "#FF0000", alpha: 0.8, bounds: true}
+     *      }
+     *  }
      */ 
     function StreamingChart(size, point, axis, style) {
         this.Container_constructor();
@@ -83,7 +86,6 @@ var charts = {};
         this._drawZero(this._style.zero);
         
         var boundsKey = this._style.chart.bounds;
-        this._isDrawPoints = boundsKey == "points" || boundsKey == "full";
         var isMaskDisplay = boundsKey != "chart" && boundsKey != "full";
         if (!isMaskDisplay) return;
         this._drawMaskShape(0, 0, this._size.width, this._size.height);
@@ -97,17 +99,19 @@ var charts = {};
         var aX, aY, bX, bY;
         aX = offsetX;
         aY = this._applyOffset(data[0]) * this._pointHeight;
-        if (!offsetX) this._drawPoint(0, aY, style);
-        this._chartShape.graphics.setStrokeStyle(style.thickness).beginStroke(style.color);
+        this._chartShape.graphics.setStrokeStyle(style.lines.thickness).beginStroke(style.lines.color);
+        this._pointShape.graphics.setStrokeStyle(style.points.thickness).beginStroke(style.points.lineColor);
+        if (!offsetX) this._drawPoint(0, aY, style.points);
         for (var i = 0; i < data.length - 1; i++) {
             bX = offsetX + stepX * (i + 1);
             bY = this._applyOffset(data[i + 1]) * this._pointHeight;
-            this._drawSegment(aX, aY, bX, bY, style);
-            this._drawPoint(bX, bY, style);
+            this._drawSegment(aX, aY, bX, bY, style.lines);
+            this._drawPoint(bX, bY, style.points);
             aX = bX;
             aY = bY;
         }
         this._chartShape.graphics.endStroke();
+        this._pointShape.graphics.endStroke();
     };
     
     p._drawSegment = function(aX, aY, bX, bY, style) {
@@ -118,8 +122,8 @@ var charts = {};
     p._drawPoint = function(x, y, style) {
         var graphics = this._pointShape.graphics;
         if (!style.radius) return;
-        if (!this._isDrawPoints && !this._isInsideBounds(x, y)) return;
-        graphics.beginFill(style.color);
+        if (style.bounds && !this._isInsideBounds(x, y)) return;
+        graphics.beginFill(style.fillColor);
         graphics.drawCircle(x, this._size.height - y, style.radius);
         graphics.endFill();
     };
@@ -151,7 +155,7 @@ var charts = {};
         var gridOffset = (-this._axisOffset * this._pointHeight) % stepY;
         gridOffset = gridOffset < 0 ? gridOffset + stepY : gridOffset;
         if (stepY) {
-            for (var y = this._size.height - gridOffset; y > 0; y -= stepY) {
+            for (var y = this._size.height - gridOffset; y >= 0; y -= stepY) {
                 graphics.moveTo(0, y).lineTo(this._size.width, y);
             }
         }
@@ -227,7 +231,7 @@ var charts = {};
             && y >= 0 && y <= this._size.height;
     };
     
-    p._searchExtreme = function(data) { //TODO: optimize!
+    p._searchExtreme = function(data) {
         var newExtreme;
         this._extremeMax.age += data.length;
         this._extremeMin.age += data.length;
