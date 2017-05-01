@@ -85,9 +85,7 @@ var charts = {};
         this._updateGrid(this._style.grid);
         this._drawZero(this._style.zero);
         
-        var boundsKey = this._style.chart.bounds;
-        var isMaskDisplay = boundsKey != "chart" && boundsKey != "full";
-        if (!isMaskDisplay) return;
+        if (this._style.chart.lines.bounds) return;
         this._drawMaskShape(0, 0, this._size.width, this._size.height);
     };
     
