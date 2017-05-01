@@ -24,15 +24,20 @@ function handleResizing() {
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
      
-    function resizeCanvas() {
+    function resizeCanvas(e) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
 }
 
+/**
+ * 
+ * 
+ */
 function testComponents() {
     stage.addChild(createChartA0());
     stage.addChild(createChartB0());
+    stage.addChild(createChartC0());
 }
 
 /**
@@ -51,7 +56,6 @@ function createChartA0() {
             lines: {thickness: 1, color: "#003333", alpha: 0.75, bounds: true},
             points:  {thickness: 0, radius: 0, lineColor: "#000000", fillColor: "#FF0000", alpha: 0, bounds: true}
         }
-        
     };
     
     var chart = new charts.StreamingChart(size, point, axis, style);
@@ -74,17 +78,16 @@ function createChartA0() {
  * 
  */
 function createChartB0() {
-    var width = window.innerWidth - 50;
-    var size = {width: width, height: 100};
-    var point = {width: width / 50, height: 0.1};
+    var size = {width: window.innerWidth - 50, height: 100};
+    var point = {width: size.width / 50, height: 0.1};
     var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         grid: {thickness: 10, color: "#FFFFFF", alpha: 1, width: 0, height: 200, dash: [1, 0]},
         zero:  {thickness: 1, color: "#000000", alpha: 0},
         chart: {
-            lines: {thickness: 2, color: "#000000", alpha: 0.8, bounds: true},
-            points:  {thickness: 2, radius: 2, lineColor: "#000000", fillColor: "#FFFFFF", alpha: 1, bounds: true}
+            lines: {thickness: 2, color: "#000000", alpha: 0.8, bounds: false},
+            points:  {thickness: 2, radius: 2, lineColor: "#000000", fillColor: "#FFFFFF", alpha: 1, bounds: false}
         }
     };
     
@@ -95,9 +98,67 @@ function createChartB0() {
     var t = 0;
     var shift = size.height / point.height / 2;
     setInterval(function() {
-        chart.append([Math.cos(t) * 420 + shift]);
+        chart.append([Math.cos(t) * 600 + shift]);
         t += 0.50;
     }, 200);
+    
+    return chart;
+}
+
+/**
+ * 
+ * 
+ */
+function createChartC0() {
+    var size = {width: window.innerWidth - 50, height: 200};
+    var point = {width: size.width / 100, height: 2};
+    var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 10, bottom: 20}};
+    var style = {
+        background: {color: "#00BB00", alpha: 0.1},
+        grid: {thickness: 0.5, color: "#00CC00", alpha: 0.25, width: 1, height: 10, dash: [1, 0]},
+        zero:  {thickness: 1, color: "#00FF00", alpha: 0.75},
+        chart: {
+            lines: {thickness: 1, color: "rgba(0, 0, 0, 255)", alpha: 0.75, bounds: true},
+            points:  {thickness: 0, radius: 0, lineColor: "rgba(0, 0, 0, 255)", fillColor: "#5AFF27", alpha: 1, bounds: true}
+        }
+    };
+    
+    var chart = new charts.StreamingChart(size, point, axis, style);
+    chart.y = 425;
+    chart.x = 25;
+    
+    var data;
+    var req = new XMLHttpRequest();
+    requestData();
+    
+    function requestData() {
+        req.open("GET", "test.json", true);
+        
+        req.addEventListener("load", reqCompleteHandler, false);
+        req.addEventListener("error", reqErrorHandler, false);
+        
+        req.send();
+    }
+    
+    function reqCompleteHandler(e) {
+        data = JSON.parse(req.responseText);
+        data = data.map(function(item, index, array) {
+            return Number(item);
+        });
+        
+        var randLength = Math.floor(Math.random() * data.length / 5) + 10;
+        chart.append(data.splice(0, randLength));
+        var t = 0;
+        
+        setInterval(function() {
+            chart.append(data[t]);
+            t ++;
+        }, 500);
+    }
+    
+    function reqErrorHandler(e) {
+        alert(req.status + ": " + req.statusText);
+    }
     
     return chart;
 }
