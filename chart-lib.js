@@ -144,7 +144,7 @@ var charts = {};
         var graphics = this._gridShape.graphics.clear();
         if (!style.alpha) return;
         graphics.setStrokeDash(style.dash);
-        graphics.setStrokeStyle(style.thickness, "butt").beginStroke(style.color);
+        graphics.setStrokeStyle(style.thickness).beginStroke(style.color);
         if (stepX) {
             for (var x = stepX; x < this._size.width; x += stepX) {
                 graphics.moveTo(x, 0).lineTo(x, this._size.height);
@@ -163,7 +163,7 @@ var charts = {};
     
     p._drawLevelLine = function(shape, thickness, color) {
         var graphics = shape.graphics.clear();
-        graphics.setStrokeStyle(thickness, "butt").beginStroke(color);
+        graphics.setStrokeStyle(thickness).beginStroke(color);
         graphics.moveTo(0, 0).lineTo(this._size.width, 0).endStroke();
     };
     

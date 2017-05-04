@@ -111,11 +111,11 @@ function createChartB0() {
  */
 function createChartC0() {
     var size = {width: window.innerWidth - 50, height: 200};
-    var point = {width: size.width / 100, height: 2};
+    var point = {width: size.width / 200, height: 2};
     var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 10, bottom: 20}};
     var style = {
         background: {color: "#00BB00", alpha: 0.1},
-        grid: {thickness: 0.5, color: "#00CC00", alpha: 0.25, width: 1, height: 10, dash: [1, 0]},
+        grid: {thickness: 0.5, color: "#00CC00", alpha: 0.25, width: 10, height: 10, dash: [1, 0]},
         zero:  {thickness: 1, color: "#00FF00", alpha: 0.75},
         chart: {
             lines: {thickness: 1, color: "rgba(0, 0, 0, 255)", alpha: 0.75, bounds: true},
@@ -142,9 +142,6 @@ function createChartC0() {
     
     function reqCompleteHandler(e) {
         data = JSON.parse(req.responseText);
-        data = data.map(function(item, index, array) {
-            return Number(item);
-        });
         
         var randLength = Math.floor(Math.random() * data.length / 5) + 10;
         chart.append(data.splice(0, randLength));
@@ -153,7 +150,7 @@ function createChartC0() {
         setInterval(function() {
             chart.append(data[t]);
             t ++;
-        }, 500);
+        }, 50);
     }
     
     function reqErrorHandler(e) {
