@@ -114,12 +114,12 @@ function createChartC0() {
     var point = {width: 1, height: 1};
     var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 5, bottom: 10}};
     var style = {
-        background: {color: "#00BB00", alpha: 0.1},
-        grid: {thickness: 0.5, color: "#00CC00", alpha: 0.25, width: 1, height: 0, dash: [1, 0]},
+        background: {color: "#00BB00", alpha: 0.6},
+        grid: {thickness: 1, color: "#FFFFFF", alpha: 0.25, width: 1, height: 0, dash: [1, 0]},
         zero:  {thickness: 1, color: "#00FF00", alpha: 0.75},
         chart: {
-            lines: {thickness: 1, color: "rgba(0, 0, 0, 1)", alpha: 0.75, bounds: true},
-            points:  {thickness: 0, radius: 0, lineColor: "rgba(0, 0, 0, 1)", fillColor: "#5AFF27", alpha: 1, bounds: true}
+            lines: {thickness: 5, color: "#FFFFFF", alpha: 0.75, bounds: true},
+            points:  {thickness: 5, radius: 10, lineColor: "#FFFFFF", fillColor: "#00BB00", alpha: 1, bounds: true}
         }
     };
     
@@ -143,7 +143,7 @@ function createChartC0() {
     function reqCompleteHandler(e) {
         data = JSON.parse(req.responseText);
         
-        var pLength = Math.ceil(Math.random() * 10 + 5);
+        var pLength = Math.ceil(Math.random() * 10 + 10);
         chart.setPoint(size.width / (pLength - 1), chart.getPoint().height);
         chart.append(data.splice(0, pLength));
         
