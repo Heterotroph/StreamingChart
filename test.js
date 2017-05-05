@@ -118,8 +118,8 @@ function createChartC0() {
         grid: {thickness: 0.5, color: "#00CC00", alpha: 0.25, width: 1, height: 0, dash: [1, 0]},
         zero:  {thickness: 1, color: "#00FF00", alpha: 0.75},
         chart: {
-            lines: {thickness: 1, color: "rgba(0, 0, 0, 255)", alpha: 0.75, bounds: true},
-            points:  {thickness: 0, radius: 0, lineColor: "rgba(0, 0, 0, 255)", fillColor: "#5AFF27", alpha: 1, bounds: true}
+            lines: {thickness: 1, color: "rgba(0, 0, 0, 1)", alpha: 0.75, bounds: true},
+            points:  {thickness: 0, radius: 0, lineColor: "rgba(0, 0, 0, 1)", fillColor: "#5AFF27", alpha: 1, bounds: true}
         }
     };
     
