@@ -63,7 +63,7 @@ function createChartA0() {
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 5, height: 300, dash: [1, 0]},
-        zero:  {thickness: 1, color: "#00FFFF", alpha: 0.75},
+        axisX:  {thickness: 1, color: "#00FFFF", alpha: 0.75, offset: 0},
         chart: {
             lines: {thickness: 1, color: "#003333", alpha: 0.75, bounds: true},
             points:  {thickness: 0, radius: 0, lineColor: "#000000", fillColor: "#FF0000", alpha: 0, bounds: true}
@@ -96,7 +96,7 @@ function createChartB0() {
     var style = {
         background: {color: "#FF0000", alpha: 0.1},
         grid: {thickness: 10, color: "#FFFFFF", alpha: 1, width: 0, height: 200, dash: [1, 0]},
-        zero:  {thickness: 1, color: "#000000", alpha: 0},
+        axisX:  {thickness: 1, color: "#000000", alpha: 0, offset: 0},
         chart: {
             lines: {thickness: 2, color: "#000000", alpha: 0.8, bounds: false},
             points:  {thickness: 2, radius: 2, lineColor: "#000000", fillColor: "#FFFFFF", alpha: 1, bounds: false}
@@ -128,7 +128,7 @@ function createChartC0() {
     var style = {
         background: {color: "#00BB00", alpha: 0.6},
         grid: {thickness: 1, color: "#FFFFFF", alpha: 0.25, width: 1, height: 0, dash: [1, 0]},
-        zero:  {thickness: 1, color: "#00FF00", alpha: 0.75},
+        axisX:  {thickness: 1, color: "#00FF00", alpha: 0.75, offset: 0},
         chart: {
             lines: {thickness: 5, color: "#FFFFFF", alpha: 0.75, bounds: true},
             points:  {thickness: 5, radius: 10, lineColor: "#FFFFFF", fillColor: "#00BB00", alpha: 1, bounds: true}
