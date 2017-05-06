@@ -32,9 +32,13 @@ function handleResizing() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         if (!chartA0) return;
-        chartA0.setSize(canvas.width - 50, chartA0.getSize().height);
-        chartB0.setSize(canvas.width - 50, chartB0.getSize().height);
-        chartC0.setSize(canvas.width - 50, chartC0.getSize().height);
+        var width = canvas.width - 50;
+        chartA0.setComplexSize(width, chartA0.getSize().height);
+        chartA0.redraw();
+        chartB0.setComplexSize(width, chartB0.getSize().height);
+        chartB0.redraw();
+        chartC0.setComplexSize(width, chartC0.getSize().height);
+        chartC0.redraw();
     }
 }
 

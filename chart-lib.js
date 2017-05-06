@@ -95,6 +95,13 @@ var charts = {};
         return this._point;
     };
     
+    p.setComplexSize = function(width, height) {
+        var floatWidthCapacity = this._size.width /  this._point.width;
+        var floatHeightCapacity = this._size.height / this._point.height;
+        this.setSize(width, height);
+        this.setPoint(this._size.width / floatWidthCapacity, this._size.height / floatHeightCapacity);
+    };
+    
     p.setSize = function(width, height) {
         this._size.width = width;
         this._size.height = height;
