@@ -1,6 +1,10 @@
 var canvas;
 var stage;
 
+var chartA0;
+var chartB0;
+var chartC0;
+
 function init() {
     var canvasID = "c";
     
@@ -27,6 +31,10 @@ function handleResizing() {
     function resizeCanvas(e) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        if (!chartA0) return;
+        chartA0.setSize(canvas.width - 50, chartA0.getSize().height);
+        chartB0.setSize(canvas.width - 50, chartB0.getSize().height);
+        chartC0.setSize(canvas.width - 50, chartC0.getSize().height);
     }
 }
 
@@ -35,9 +43,9 @@ function handleResizing() {
  * 
  */
 function testComponents() {
-    stage.addChild(createChartA0());
-    stage.addChild(createChartB0());
-    stage.addChild(createChartC0());
+    chartA0 = stage.addChild(createChartA0());
+    chartB0 = stage.addChild(createChartB0());
+    chartC0 = stage.addChild(createChartC0());
 }
 
 /**
@@ -45,7 +53,7 @@ function testComponents() {
  * 
  */
 function createChartA0() {
-    var size = {width: window.innerWidth - 50, height: 250};
+    var size = {width: canvas.width - 50, height: 250};
     var point = {width: size.width / 70, height: 0.20};
     var axis = {offset: 50, isDynamic: true, dynamicSpace: {top: 50, bottom: 50}};
     var style = {
@@ -78,7 +86,7 @@ function createChartA0() {
  * 
  */
 function createChartB0() {
-    var size = {width: window.innerWidth - 50, height: 100};
+    var size = {width: canvas.width - 50, height: 100};
     var point = {width: size.width / 50, height: 0.1};
     var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
     var style = {
@@ -110,7 +118,7 @@ function createChartB0() {
  * 
  */
 function createChartC0() {
-    var size = {width: window.innerWidth - 50, height: 200};
+    var size = {width: canvas.width - 50, height: 200};
     var point = {width: 1, height: 1};
     var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 5, bottom: 10}};
     var style = {
@@ -145,6 +153,7 @@ function createChartC0() {
         
         var pLength = Math.ceil(Math.random() * 10 + 10);
         chart.setPoint(size.width / (pLength - 1), chart.getPoint().height);
+        chart.redraw();
         chart.append(data.splice(0, pLength));
         
         var t = 0;

@@ -32,11 +32,8 @@ var charts = {};
         //dynamic values
         this._widthCapacity = 0;
         this._heightCapacity = 0;
-        this._pointsWidthCapacity = 0;
-        this._calculateCapacity();
-        this._extremeMax = {value: -Number.MAX_VALUE, age: this._widthCapacity};
-        this._extremeMin = {value: Number.MAX_VALUE, age: this._widthCapacity};
-        this._axisOffset = this._axis.offset;
+        this._extremeMax = {value: -Number.MAX_VALUE, age: Number.MAX_VALUE};
+        this._extremeMin = {value: Number.MAX_VALUE, age: Number.MAX_VALUE};
         
         //views
         this._backgroundShape = this.addChild(new createjs.Shape());
@@ -46,7 +43,7 @@ var charts = {};
         this._pointShape = this.addChild(new createjs.Shape());
         
         //apply style configuration
-        this.updateStyle();
+        this.redraw();
     }
     
     var p = createjs.extend(StreamingChart, createjs.Container);
@@ -58,7 +55,7 @@ var charts = {};
     p.append = function(data) {
         if (data.length === 0) return;
         var totalData = this._data.concat(data);
-        this._data = totalData.slice(-this._pointsWidthCapacity);
+        this._data = totalData.slice(-this._widthCapacity);
         
         this._searchExtreme(data);
         this._processExtreme();
@@ -77,10 +74,11 @@ var charts = {};
     
     p.setStyle = function(style) {
         this._style = style;
-        this.updateStyle();
+        this.redraw();
     };
     
-    p.updateStyle = function() {
+    p.redraw = function() {
+        this._calculateCapacity();
         this._drawBackgroundShape(this._size, this._style.background);
         this._updateGrid(this._style.grid);
         this._drawZero(this._style.zero);
@@ -91,8 +89,6 @@ var charts = {};
     p.setPoint = function(width, height) {
         this._point.width = width;
         this._point.height = height;
-        this._calculateCapacity();
-        this.updateStyle();
     };
     
     p.getPoint = function() {
@@ -102,8 +98,6 @@ var charts = {};
     p.setSize = function(width, height) {
         this._size.width = width;
         this._size.height = height;
-        this._calculateCapacity();
-        this.updateStyle();
     };
     
     p.getSize = function() {
@@ -175,7 +169,7 @@ var charts = {};
                 graphics.moveTo(x, 0).lineTo(x, this._size.height);
             }
         }
-        var gridOffset = (-this._axisOffset * this._point.height) % stepY;
+        var gridOffset = (-this._axis.offset * this._point.height) % stepY;
         gridOffset = gridOffset < 0 ? gridOffset + stepY : gridOffset;
         if (stepY) {
             for (var y = this._size.height - gridOffset; y >= 0; y -= stepY) {
@@ -238,8 +232,8 @@ var charts = {};
     
     p._calculateAxisOffset = function() {
         var tempOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom;
-        var result = this._axisOffset != tempOffset;
-        this._axisOffset = tempOffset;
+        var result = this._axis.offset != tempOffset;
+        this._axis.offset = tempOffset;
         return result;
     };
     
@@ -247,20 +241,19 @@ var charts = {};
         var newPointHeight = this._point.height;
         newPointHeight = this._size.height / this._applyOffset(this._extremeMax.value + this._axis.dynamicSpace.top);
         newPointHeight = Math.min(newPointHeight, this._size.height);
-        this._heightCapacity = Math.floor(this._size.height / newPointHeight);
         var result = this._point.height != newPointHeight;
         this._point.height = newPointHeight;
+        this._calculateCapacity();
         return result;
     };
     
     p._calculateCapacity = function() {
-        this._widthCapacity = Math.floor(this._size.width /  this._point.width);
-        this._heightCapacity = Math.floor(this._size.height / this._point.height);
-        this._pointsWidthCapacity = this._widthCapacity + 1;
+        this._widthCapacity = Math.floor(this._size.width /  this._point.width) + 1;
+        this._heightCapacity = Math.floor(this._size.height / this._point.height) + 1;
     };
     
     p._applyOffset = function(y) {
-        return y - this._axisOffset;
+        return y - this._axis.offset;
     };
     
     p._isInsideBounds = function(x, y) {
@@ -272,8 +265,8 @@ var charts = {};
         var newExtreme;
         this._extremeMax.age += data.length;
         this._extremeMin.age += data.length;
-        var isOld = this._extremeMax.age >= this._pointsWidthCapacity;
-        isOld = isOld || this._extremeMin.age >= this._pointsWidthCapacity;
+        var isOld = this._extremeMax.age >= this._widthCapacity;
+        isOld = isOld || this._extremeMin.age >= this._widthCapacity;
         if (isOld || !data.length) {
             newExtreme = this._getExtreme(Number.MAX_VALUE, -Number.MAX_VALUE, this._data);
         } else {
@@ -284,8 +277,8 @@ var charts = {};
     };
     
     p._getExtreme = function(min, max, data) {
-        var currentMax = {value: max, age: this._pointsWidthCapacity};
-        var currentMin = {value: min, age: this._pointsWidthCapacity};
+        var currentMax = {value: max, age: this._widthCapacity};
+        var currentMin = {value: min, age: this._widthCapacity};
         for (var i = 0; i < data.length; i++) {
             currentMax.value = Math.max(currentMax.value, data[i]);
             if (currentMax.value == data[i]) currentMax.age = data.length - i - 1;
