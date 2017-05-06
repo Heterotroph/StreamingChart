@@ -144,16 +144,10 @@ var charts = {};
     };
     
     p.getIndexByLocalX = function(localX) {
-        //  Alternative
-        //var ratio = this._size.width / localX;
-        //return (this._widthCapacity - 1) / ratio;
         return localX / this._point.width;
     };
     
     p.getLocalXByIndex = function(index) {
-        //  Alternative
-        //var ratio = (this._widthCapacity - 1) / index;
-        //return this._size.width / ratio;
         return index * this._point.width;
     };
     
