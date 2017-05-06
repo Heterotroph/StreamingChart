@@ -126,9 +126,31 @@ var charts = {};
     };
     
     p.getInterpolatedValueByLocalX = function(localX) {
-        var ratio = this._size.width / localX;
-        var index = this._widthCapacity / ratio;
+        var index = getIndexByLocalX(localX);
         return this.getInterpolatedValue(index);
+    };
+    
+    p.getExtreme = function() {
+        var indexCapacity = Math.min(data.length, this._widthCapacity) - 1;
+        var min = {
+            value: _extremeMin.value,
+            index: indexCapacity - _extremeMin.age
+        };
+        var max = {
+            value: _extremeMax.value,
+            index: indexCapacity - _extremeMax.age
+        };
+        return {min: min, max: max};
+    };
+    
+    p.getIndexByLocalX = function(localX) {
+        var ratio = this._size.width / localX;
+        return (this._widthCapacity - 1) / ratio;
+    };
+    
+    p.getLocalXByIndex = function(index) {
+        var ratio = (this._widthCapacity - 1) / index;
+        return this._size.width / ratio;
     };
     
     //
