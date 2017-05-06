@@ -144,13 +144,25 @@ var charts = {};
     };
     
     p.getIndexByLocalX = function(localX) {
-        var ratio = this._size.width / localX;
-        return (this._widthCapacity - 1) / ratio;
+        //  Alternative
+        //var ratio = this._size.width / localX;
+        //return (this._widthCapacity - 1) / ratio;
+        return localX / this._point.width;
     };
     
     p.getLocalXByIndex = function(index) {
-        var ratio = (this._widthCapacity - 1) / index;
-        return this._size.width / ratio;
+        //  Alternative
+        //var ratio = (this._widthCapacity - 1) / index;
+        //return this._size.width / ratio;
+        return index * this._point.width;
+    };
+    
+    p.getValueByLocalY = function(localY) {
+        return localY / this._point.height;
+    };
+    
+    p.getLocalYByValue = function(value) {
+        return value * this._point.height;
     };
     
     //
