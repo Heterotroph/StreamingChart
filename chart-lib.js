@@ -1,3 +1,8 @@
+/**
+ * @author R.Akhtyamov
+ * StreamingChart
+ */
+
 var charts = {};
 
 (function() {
