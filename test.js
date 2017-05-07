@@ -101,7 +101,7 @@ function testComponents() {
         text4.text = "LP [" + chartC0.getIndexByLocalX(localPoint.x).toFixed(2) + ", " + chartC0.getValueByLocalY(localPoint.y).toFixed(2) + "]";
         text5.text = "Interpolated: " + chartC0.getInterpolatedValueByLocalX(localPoint.x).toFixed(2);
         
-        text6.text = "LV [" + chartC0.getIndexByLocalX(0).toFixed(2) + ", " + chartC0.getValueByLocalY(chartC0.getSize().height).toFixed(2) + "]";
+        text6.text = "LV [" + chartC0.getValueByLocalY(0).toFixed(2) + ", " + chartC0.getValueByLocalY(chartC0.getSize().height).toFixed(2) + "]";
         
         var pointSize = chartC0.getPoint();
         text7.text = "PS [" + pointSize.width.toFixed(2) + ", " + pointSize.height.toFixed(2) + "]";
