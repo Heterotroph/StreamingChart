@@ -154,7 +154,7 @@ var charts = {};
     
     p.getLocalXByIndex = function(index) {
         var localX = index * this._point.width;
-        return Math.round(localX * 100) / 100;
+        return Math.round(localX);
     };
     
     p.getValueByLocalY = function(localY) {
@@ -163,7 +163,7 @@ var charts = {};
     
     p.getLocalYByValue = function(value) {
         var localY = this._size.height - (this._applyOffset(value) * this._point.height);
-        return Math.round(localY * 100) / 100;
+        return Math.round(localY);
     };
     
     //
@@ -176,10 +176,10 @@ var charts = {};
         aY = this._applyOffset(data[0]) * this._point.height;
         this._chartShape.graphics.setStrokeStyle(style.lines.thickness).beginStroke(style.lines.color);
         this._pointShape.graphics.setStrokeStyle(style.points.thickness).beginStroke(style.points.lineColor);
-        if (offsetX === 0) this._drawPoint(0, aY, style.points);
+        if (offsetX === 0) this._drawPoint(0, Math.round(aY), style.points);
         for (var i = 0; i < data.length - 1; i++) {
-            bX = offsetX + stepX * (i + 1);
-            bY = this._applyOffset(data[i + 1]) * this._point.height;
+            bX = Math.round(offsetX + stepX * (i + 1));
+            bY = Math.round(this._applyOffset(data[i + 1]) * this._point.height);
             this._drawSegment(aX, aY, bX, bY, style.lines);
             this._drawPoint(bX, bY, style.points);
             aX = bX;

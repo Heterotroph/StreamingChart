@@ -4,6 +4,7 @@ var stage;
 var chartA0;
 var chartB0;
 var chartC0;
+var fieldsContainer;
 
 function init() {
     var canvasID = "c";
@@ -32,13 +33,15 @@ function handleResizing() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         if (!chartA0) return;
-        var width = canvas.width - 300;
+        var width = canvas.width - 100;
         chartA0.setComplexSize(width, chartA0.getSize().height);
         chartA0.redraw();
         chartB0.setComplexSize(width, chartB0.getSize().height);
         chartB0.redraw();
-        chartC0.setComplexSize(width, chartC0.getSize().height);
+        chartC0.setComplexSize(width - 200, chartC0.getSize().height);
         chartC0.redraw();
+        fieldsContainer.x = chartC0.x + chartC0.getSize().width + 25;
+        fieldsContainer.y = chartC0.y;
     }
 }
 
@@ -51,34 +54,31 @@ function testComponents() {
     chartB0 = stage.addChild(createChartB0());
     chartC0 = stage.addChild(createChartC0());
     
+    fieldsContainer = stage.addChild(new createjs.Container());
+    fieldsContainer.x = chartC0.x + chartC0.getSize().width + 25;
+    fieldsContainer.y = chartC0.y;
+    
     var text0 = new createjs.Text("Last added: ", "16px Courier", "#000000");
-    stage.addChild(text0);
-    text0.x = chartC0.x + chartC0.getSize().width + 25;
-    text0.y = chartC0.y;
+    fieldsContainer.addChild(text0);
     
     var text1 = new createjs.Text("Local max: ", "16px Courier", "#000000");
-    stage.addChild(text1);
-    text1.x = chartC0.x + chartC0.getSize().width + 25;
-    text1.y = chartC0.y + text0.getBounds().height + 10;
+    fieldsContainer.addChild(text1);
+    text1.y = text1.y + text0.getBounds().height + 10;
     
     var text2 = new createjs.Text("Local min: ", "16px Courier", "#000000");
-    stage.addChild(text2);
-    text2.x = chartC0.x + chartC0.getSize().width + 25;
+    fieldsContainer.addChild(text2);
     text2.y = text1.y + text1.getBounds().height + 10;
     
-    var text3 = new createjs.Text("Coordinates", "16px Courier", "#000000");
-    stage.addChild(text3);
-    text3.x = chartC0.x + chartC0.getSize().width + 25;
+    var text3 = new createjs.Text("[Coordinates]", "16px Courier", "#000000");
+    fieldsContainer.addChild(text3);
     text3.y = text2.y + text2.getBounds().height + 10;
     
-    var text4 = new createjs.Text("LocalY to value: ", "16px Courier", "#000000");
-    stage.addChild(text4);
-    text4.x = chartC0.x + chartC0.getSize().width + 25;
+    var text4 = new createjs.Text("[Coord to points]", "16px Courier", "#000000");
+    fieldsContainer.addChild(text4);
     text4.y = text3.y + text3.getBounds().height + 10;
     
     var text5 = new createjs.Text("Interpolated: ", "16px Courier", "#000000");
-    stage.addChild(text5);
-    text5.x = chartC0.x + chartC0.getSize().width + 25;
+    fieldsContainer.addChild(text5);
     text5.y = text4.y + text4.getBounds().height + 10;
     
     createjs.Ticker.on("tick", function() {
