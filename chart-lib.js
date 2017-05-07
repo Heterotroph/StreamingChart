@@ -131,19 +131,19 @@ var charts = {};
     };
     
     p.getInterpolatedValueByLocalX = function(localX) {
-        var index = getIndexByLocalX(localX);
+        var index = this.getIndexByLocalX(localX);
         return this.getInterpolatedValue(index);
     };
     
     p.getExtreme = function() {
-        var indexCapacity = Math.min(data.length, this._widthCapacity) - 1;
+        var indexCapacity = Math.min(this._data.length, this._widthCapacity) - 1;
         var min = {
-            value: _extremeMin.value,
-            index: indexCapacity - _extremeMin.age
+            value: this._extremeMin.value,
+            index: indexCapacity - this._extremeMin.age
         };
         var max = {
-            value: _extremeMax.value,
-            index: indexCapacity - _extremeMax.age
+            value: this._extremeMax.value,
+            index: indexCapacity - this._extremeMax.age
         };
         return {min: min, max: max};
     };
@@ -153,15 +153,17 @@ var charts = {};
     };
     
     p.getLocalXByIndex = function(index) {
-        return index * this._point.width;
+        var localX = index * this._point.width;
+        return Math.round(localX * 100) / 100;
     };
     
     p.getValueByLocalY = function(localY) {
-        return localY / this._point.height;
+        return (this._size.height - localY) / this._point.height + this._axis.offset;
     };
     
     p.getLocalYByValue = function(value) {
-        return value * this._point.height;
+        var localY = this._size.height - (this._applyOffset(value) * this._point.height);
+        return Math.round(localY * 100) / 100;
     };
     
     //

@@ -32,7 +32,7 @@ function handleResizing() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         if (!chartA0) return;
-        var width = canvas.width - 50;
+        var width = canvas.width - 300;
         chartA0.setComplexSize(width, chartA0.getSize().height);
         chartA0.redraw();
         chartB0.setComplexSize(width, chartB0.getSize().height);
@@ -50,6 +50,46 @@ function testComponents() {
     chartA0 = stage.addChild(createChartA0());
     chartB0 = stage.addChild(createChartB0());
     chartC0 = stage.addChild(createChartC0());
+    
+    var text0 = new createjs.Text("Last added: ", "16px Courier", "#000000");
+    stage.addChild(text0);
+    text0.x = chartC0.x + chartC0.getSize().width + 25;
+    text0.y = chartC0.y;
+    
+    var text1 = new createjs.Text("Local max: ", "16px Courier", "#000000");
+    stage.addChild(text1);
+    text1.x = chartC0.x + chartC0.getSize().width + 25;
+    text1.y = chartC0.y + text0.getBounds().height + 10;
+    
+    var text2 = new createjs.Text("Local min: ", "16px Courier", "#000000");
+    stage.addChild(text2);
+    text2.x = chartC0.x + chartC0.getSize().width + 25;
+    text2.y = text1.y + text1.getBounds().height + 10;
+    
+    var text3 = new createjs.Text("Coordinates", "16px Courier", "#000000");
+    stage.addChild(text3);
+    text3.x = chartC0.x + chartC0.getSize().width + 25;
+    text3.y = text2.y + text2.getBounds().height + 10;
+    
+    var text4 = new createjs.Text("LocalY to value: ", "16px Courier", "#000000");
+    stage.addChild(text4);
+    text4.x = chartC0.x + chartC0.getSize().width + 25;
+    text4.y = text3.y + text3.getBounds().height + 10;
+    
+    var text5 = new createjs.Text("Interpolated: ", "16px Courier", "#000000");
+    stage.addChild(text5);
+    text5.x = chartC0.x + chartC0.getSize().width + 25;
+    text5.y = text4.y + text4.getBounds().height + 10;
+    
+    createjs.Ticker.on("tick", function() {
+        text0.text = "Last added: " + chartC0.getData()[chartC0.getData().length - 1];
+        text1.text = "Local max: " + chartC0.getExtreme().max.value;
+        text2.text = "Local min: " + chartC0.getExtreme().min.value;
+        var localPoint = chartC0.globalToLocal(stage.mouseX, stage.mouseY);
+        text3.text = "[" + localPoint.x.toFixed(2) + ", " + localPoint.y.toFixed(2) + "]";
+        text4.text = "[" + chartC0.getIndexByLocalX(localPoint.x).toFixed(2) + ", " + chartC0.getValueByLocalY(localPoint.y).toFixed(2) + "]";
+        text5.text = "Interpolated: " + chartC0.getInterpolatedValueByLocalX(localPoint.x).toFixed(2);
+    });
 }
 
 /**
@@ -122,7 +162,7 @@ function createChartB0() {
  * 
  */
 function createChartC0() {
-    var size = {width: canvas.width - 50, height: 200};
+    var size = {width: canvas.width - 300, height: 200};
     var point = {width: 1, height: 1};
     var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 0, bottom: 10}};
     var style = {
