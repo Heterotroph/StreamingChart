@@ -86,7 +86,7 @@ function testComponents() {
         text1.text = "Local max: " + chartC0.getExtreme().max.value;
         text2.text = "Local min: " + chartC0.getExtreme().min.value;
         var localPoint = chartC0.globalToLocal(stage.mouseX, stage.mouseY);
-        text3.text = "[" + localPoint.x.toFixed(2) + ", " + localPoint.y.toFixed(2) + "]";
+        text3.text = "[" + localPoint.x + ", " + localPoint.y + "]";
         text4.text = "[" + chartC0.getIndexByLocalX(localPoint.x).toFixed(2) + ", " + chartC0.getValueByLocalY(localPoint.y).toFixed(2) + "]";
         text5.text = "Interpolated: " + chartC0.getInterpolatedValueByLocalX(localPoint.x).toFixed(2);
     });
@@ -208,7 +208,7 @@ function createChartC0() {
             }
             chart.append(data[t]);
             t ++;
-        }, 1000);
+        }, 1500);
         
         req.removeEventListener("load", reqCompleteHandler, false);
         req.removeEventListener("error", reqErrorHandler, false);
