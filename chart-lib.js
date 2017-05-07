@@ -101,10 +101,12 @@ var charts = {};
     };
     
     p.setComplexSize = function(width, height) {
-        var floatWidthCapacity = this._size.width /  this._point.width;
-        var floatHeightCapacity = this._size.height / this._point.height;
+        var widthSegments = this._size.width /  this._point.width;
+        widthSegments = Math.ceil(widthSegments * 1000) / 1000; //TODO: Убрать этот костыль и найти красивое решение
+        var heightSegments = this._size.height / this._point.height;
+        heightSegments = Math.ceil(heightSegments * 1000) / 1000; //TODO: ...
         this.setSize(width, height);
-        this.setPoint(this._size.width / floatWidthCapacity, this._size.height / floatHeightCapacity);
+        this.setPoint(this._size.width / widthSegments, this._size.height / heightSegments);
     };
     
     p.setSize = function(width, height) {

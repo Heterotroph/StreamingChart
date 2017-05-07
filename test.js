@@ -33,12 +33,12 @@ function handleResizing() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         if (!chartA0) return;
-        var width = canvas.width - 100;
+        var width = canvas.width - 50;
         chartA0.setComplexSize(width, chartA0.getSize().height);
         chartA0.redraw();
         chartB0.setComplexSize(width, chartB0.getSize().height);
         chartB0.redraw();
-        chartC0.setComplexSize(width - 200, chartC0.getSize().height);
+        chartC0.setComplexSize(width - 250, chartC0.getSize().height);
         chartC0.redraw();
         fieldsContainer.x = chartC0.x + chartC0.getSize().width + 25;
         fieldsContainer.y = chartC0.y;
@@ -81,14 +81,30 @@ function testComponents() {
     fieldsContainer.addChild(text5);
     text5.y = text4.y + text4.getBounds().height + 10;
     
+    var text6 = new createjs.Text("[Top-Bottom values]: ", "16px Courier", "#000000");
+    fieldsContainer.addChild(text6);
+    text6.y = text5.y + text5.getBounds().height + 10;
+    
+    var text7 = new createjs.Text("[Point size]: ", "16px Courier", "#000000");
+    fieldsContainer.addChild(text7);
+    text7.y = text6.y + text6.getBounds().height + 10;
+    
     createjs.Ticker.on("tick", function() {
         text0.text = "Last added: " + chartC0.getData()[chartC0.getData().length - 1];
-        text1.text = "Local max: " + chartC0.getExtreme().max.value;
-        text2.text = "Local min: " + chartC0.getExtreme().min.value;
+        
+        var extreme = chartC0.getExtreme();
+        text1.text = "Local max: " + extreme.max.value;
+        text2.text = "Local min: " + extreme.min.value;
+        
         var localPoint = chartC0.globalToLocal(stage.mouseX, stage.mouseY);
-        text3.text = "[" + localPoint.x + ", " + localPoint.y + "]";
-        text4.text = "[" + chartC0.getIndexByLocalX(localPoint.x).toFixed(2) + ", " + chartC0.getValueByLocalY(localPoint.y).toFixed(2) + "]";
+        text3.text = "LC [" + localPoint.x + ", " + localPoint.y + "]";
+        text4.text = "LP [" + chartC0.getIndexByLocalX(localPoint.x).toFixed(2) + ", " + chartC0.getValueByLocalY(localPoint.y).toFixed(2) + "]";
         text5.text = "Interpolated: " + chartC0.getInterpolatedValueByLocalX(localPoint.x).toFixed(2);
+        
+        text6.text = "LV [" + chartC0.getIndexByLocalX(0).toFixed(2) + ", " + chartC0.getValueByLocalY(chartC0.getSize().height).toFixed(2) + "]";
+        
+        var pointSize = chartC0.getPoint();
+        text7.text = "PS [" + pointSize.width.toFixed(2) + ", " + pointSize.height.toFixed(2) + "]";
     });
 }
 
