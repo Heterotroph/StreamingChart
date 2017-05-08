@@ -121,7 +121,7 @@ var charts = {};
     p.setGrid = function(width, height) {
         this._style.grid.width = width;
         this._style.grid.height = height;
-        this._updateGrid();
+        this._updateGrid(this._style.grid);
     };
     
     p.getGrid = function() {
