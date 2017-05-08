@@ -118,6 +118,16 @@ var charts = {};
         return {width: this._size.width, height: this._size.height};
     };
     
+    p.setGrid = function(width, height) {
+        this._style.grid.width = width;
+        this._style.grid.height = height;
+        this._updateGrid();
+    };
+    
+    p.getGrid = function() {
+        return {width: this._style.grid.width, height: this._style.grid.height};
+    };
+    
     p.getData = function() {
         return this._data.slice();
     };
