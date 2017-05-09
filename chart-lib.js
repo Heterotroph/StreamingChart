@@ -132,6 +132,10 @@ var charts = {};
         return this._data.slice();
     };
     
+    p.getCapacity = function() {
+        return this._widthCapacity;
+    };
+    
     p.getInterpolatedValue = function(index) {
         index = Math.round(index * 100) / 100;
         index = Math.min(index, this._data.length - 1);
