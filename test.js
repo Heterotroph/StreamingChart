@@ -115,7 +115,7 @@ function testComponents() {
 function createChartA0() {
     var size = {width: canvas.width - 50, height: 250};
     var point = {width: size.width / 70, height: 0.20};
-    var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 100, bottom: 100}};
+    var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 10, bottom: 10}};
     var style = {
         background: {color: "#00AAFF", alpha: 0.1},
         grid: {thickness: 0.5, color: "#00FFFF", alpha: 0.5, width: 5, height: 300, dash: [1, 0]},
@@ -180,7 +180,7 @@ function createChartB0() {
 function createChartC0() {
     var size = {width: canvas.width - 300, height: 200};
     var point = {width: 1, height: 1};
-    var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 0, bottom: 10}};
+    var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 0, bottom: 100}};
     var style = {
         background: {color: "#00BB00", alpha: 0.6},
         grid: {thickness: 1, color: "#FFFFFF", alpha: 0.25, width: 1, height: 0, dash: [1, 0]},
