@@ -85,21 +85,11 @@ var charts = {};
     };
     
     p.redraw = function() {
-        this._calculateCapacity();
+        this.append(this._data.splice(0, this._data.length));
         this._drawBackgroundShape(this._size, this._style.background);
         this._updateGrid(this._style.grid);
         this._drawAxisX(this._style.axisX);
         this._updateMask(this._style.chart.lines.bounds, this._size.width, this._size.height);
-        this.append(this._data.splice(0, this._data.length));
-    };
-    
-    p.setPoint = function(width, height) {
-        this._dynamicPoint.width = width;
-        this._dynamicPoint.height = height;
-    };
-    
-    p.getPoint = function() {
-        return {width: this._dynamicPoint.width, height: this._dynamicPoint.height};
     };
     
     p.setComplexSize = function(width, height) {
@@ -118,6 +108,25 @@ var charts = {};
     
     p.getSize = function() {
         return {width: this._size.width, height: this._size.height};
+    };
+    
+    p.setPoint = function(width, height) {
+        this._point.width = width;
+        this._point.height = height;
+        this._dynamicPoint = {width: this._point.width, height: this._point.height};
+    };
+    
+    p.getPoint = function() {
+        return {width: this._dynamicPoint.width, height: this._dynamicPoint.height};
+    };
+    
+    p.setOffset = function(value) {
+        this._axis.offset = value;
+        this._dynamicOffset = value;
+    };
+    
+    p.getOffset = function() {
+        return this._dynamicOffset;
     };
     
     p.setGrid = function(width, height) {
