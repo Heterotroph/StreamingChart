@@ -1,6 +1,6 @@
 /**
  * @author R.Akhtyamov
- * StreamingChart
+ * https://github.com/Heterotroph/StreamingChart
  */
 
 var charts = {};
@@ -37,6 +37,8 @@ var charts = {};
         //dynamic values
         this._widthCapacity = 0;
         this._heightCapacity = 0;
+        this._dynamicOffset = axis.offset;
+        this._dynamicPoint = {width: point.width, height: point.height};
         this._extremeMax = {value: -Number.MAX_VALUE, age: Number.MAX_VALUE};
         this._extremeMin = {value: Number.MAX_VALUE, age: Number.MAX_VALUE};
         
@@ -66,7 +68,7 @@ var charts = {};
         this._processExtreme();
         
         this._clearChartAndPoints();
-        this._drawChart(0, this._point.width, this._data, this._style.chart);
+        this._drawChart(0, this._dynamicPoint.width, this._data, this._style.chart);
     };
     
     p.clear = function() {
@@ -92,18 +94,18 @@ var charts = {};
     };
     
     p.setPoint = function(width, height) {
-        this._point.width = width;
-        this._point.height = height;
+        this._dynamicPoint.width = width;
+        this._dynamicPoint.height = height;
     };
     
     p.getPoint = function() {
-        return {width: this._point.width, height: this._point.height};
+        return {width: this._dynamicPoint.width, height: this._dynamicPoint.height};
     };
     
     p.setComplexSize = function(width, height) {
-        var widthSegments = this._size.width /  this._point.width;
+        var widthSegments = this._size.width /  this._dynamicPoint.width;
         widthSegments = Math.ceil(widthSegments * 1000) / 1000; //TODO: Убрать этот костыль и найти красивое решение
-        var heightSegments = this._size.height / this._point.height;
+        var heightSegments = this._size.height / this._dynamicPoint.height;
         heightSegments = Math.ceil(heightSegments * 1000) / 1000; //TODO: ...
         this.setSize(width, height);
         this.setPoint(this._size.width / widthSegments, this._size.height / heightSegments);
@@ -165,20 +167,20 @@ var charts = {};
     };
     
     p.getIndexByLocalX = function(localX) {
-        return localX / this._point.width;
+        return localX / this._dynamicPoint.width;
     };
     
     p.getLocalXByIndex = function(index) {
-        var localX = index * this._point.width;
+        var localX = index * this._dynamicPoint.width;
         return Math.round(localX);
     };
     
     p.getValueByLocalY = function(localY) {
-        return (this._size.height - localY) / this._point.height + this._axis.offset;
+        return (this._size.height - localY) / this._dynamicPoint.height + this._dynamicOffset;
     };
     
     p.getLocalYByValue = function(value) {
-        var localY = this._size.height - (this._applyOffset(value) * this._point.height);
+        var localY = this._size.height - (this._applyOffset(value) * this._dynamicPoint.height);
         return Math.round(localY);
     };
     
@@ -189,13 +191,13 @@ var charts = {};
     p._drawChart = function(offsetX, stepX, data, style) {
         var aX, aY, bX, bY;
         aX = offsetX;
-        aY = this._applyOffset(data[0]) * this._point.height;
+        aY = this._applyOffset(data[0]) * this._dynamicPoint.height;
         this._chartShape.graphics.setStrokeStyle(style.lines.thickness).beginStroke(style.lines.color);
         this._pointShape.graphics.setStrokeStyle(style.points.thickness).beginStroke(style.points.lineColor);
         if (offsetX === 0) this._drawPoint(0, Math.round(aY), style.points);
         for (var i = 0; i < data.length - 1; i++) {
             bX = Math.round(offsetX + stepX * (i + 1));
-            bY = Math.round(this._applyOffset(data[i + 1]) * this._point.height);
+            bY = Math.round(this._applyOffset(data[i + 1]) * this._dynamicPoint.height);
             this._drawSegment(aX, aY, bX, bY, style.lines);
             this._drawPoint(bX, bY, style.points);
             aX = bX;
@@ -228,8 +230,8 @@ var charts = {};
     };
     
     p._updateGrid = function(style) {
-        var stepX = this._point.width * this._style.grid.width;
-        var stepY = this._point.height * this._style.grid.height;
+        var stepX = this._dynamicPoint.width * this._style.grid.width;
+        var stepY = this._dynamicPoint.height * this._style.grid.height;
         this._drawGridShape(stepX, stepY, style);
     };
     
@@ -243,7 +245,7 @@ var charts = {};
                 graphics.moveTo(x, 0).lineTo(x, this._size.height);
             }
         }
-        var gridOffset = (-this._axis.offset * this._point.height) % stepY;
+        var gridOffset = (-this._dynamicOffset * this._dynamicPoint.height) % stepY;
         gridOffset = gridOffset < 0 ? gridOffset + stepY : gridOffset;
         if (stepY) {
             for (var y = this._size.height - gridOffset; y >= 0; y -= stepY) {
@@ -282,15 +284,14 @@ var charts = {};
     };
     
     p._moveAxisX = function(offset) {
-        this._axisXShape.y = this._size.height - this._applyOffset(offset) * this._point.height;
+        this._axisXShape.y = this._size.height - this._applyOffset(offset) * this._dynamicPoint.height;
         this._axisXShape.visible = this._isInsideBounds(0, this._axisXShape.y);
     };
     
     p._processExtreme = function() {
         if (!this._axis.isDynamic) return;
-        var isAxisOffsetChanged = this._calculateAxisOffset();
-        var isPointHeightChanged = this._calculatePointHeight();
-        if (!isAxisOffsetChanged && !isPointHeightChanged) return;
+        var isDynamicChanged = this._calculateDynamic();
+        if (!isDynamicChanged) return;
         this._updateGrid(this._style.grid);
         this._moveAxisX(this._style.axisX.offset);
     };
@@ -304,30 +305,29 @@ var charts = {};
     //  PRIVATE METHODS (UTILS)
     //
     
-    p._calculateAxisOffset = function() {
-        var tempOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom / this._point.height;
-        var result = this._axis.offset != tempOffset;
-        this._axis.offset = tempOffset;
-        return result;
-    };
-    
-    p._calculatePointHeight = function() {
-        var newPointHeight = this._point.height;
-        newPointHeight = this._size.height / this._applyOffset(this._extremeMax.value + this._axis.dynamicSpace.top / this._point.height);
-        newPointHeight = Math.min(newPointHeight, this._size.height);
-        var result = this._point.height != newPointHeight;
-        this._point.height = newPointHeight;
-        this._calculateCapacity();
+    p._calculateDynamic = function() {
+        var workHeight = this._size.height - this._axis.dynamicSpace.top - this._axis.dynamicSpace.bottom;
+        var workDelta = this._extremeMax.value - this._extremeMin.value  - this._axis.offset;
+        var tempPointHeight = workHeight / workDelta;
+        tempPointHeight = Math.min(tempPointHeight, workHeight);
+        
+        var tempAxisOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom / tempPointHeight;
+        
+        var result = this._dynamicPoint.height != tempPointHeight || this._dynamicOffset != tempAxisOffset;
+        this._dynamicOffset = tempAxisOffset;
+        this._dynamicPoint.height = tempPointHeight;
+        if (result) this._calculateCapacity();
+        
         return result;
     };
     
     p._calculateCapacity = function() {
-        this._widthCapacity = Math.floor(this._size.width /  this._point.width) + 1;
-        this._heightCapacity = Math.floor(this._size.height / this._point.height) + 1;
+        this._widthCapacity = Math.floor(this._size.width /  this._dynamicPoint.width) + 1;
+        this._heightCapacity = Math.floor(this._size.height / this._dynamicPoint.height) + 1;
     };
     
     p._applyOffset = function(y) {
-        return y - this._axis.offset;
+        return y - this._dynamicOffset;
     };
     
     p._isInsideBounds = function(x, y) {
