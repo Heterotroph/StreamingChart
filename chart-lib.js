@@ -105,6 +105,7 @@ var charts = {};
     p.setSize = function(width, height) {
         this._size.width = width;
         this._size.height = height;
+        this._calculateCapacity();
     };
     
     p.getSize = function() {
@@ -115,6 +116,7 @@ var charts = {};
         this._point.width = width;
         this._point.height = height;
         this._dynamicPoint = {width: this._point.width, height: this._point.height};
+        this._calculateCapacity();
     };
     
     p.getPoint = function() {
