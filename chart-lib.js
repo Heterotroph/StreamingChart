@@ -50,7 +50,6 @@ var charts = {};
         this._pointShape = this.addChild(new createjs.Shape());
         
         //apply style configuration
-        this._calculateCapacity();
         this.redraw();
     }
     
@@ -105,7 +104,6 @@ var charts = {};
     p.setSize = function(width, height) {
         this._size.width = width;
         this._size.height = height;
-        this._calculateCapacity();
     };
     
     p.getSize = function() {
@@ -116,7 +114,6 @@ var charts = {};
         this._point.width = width;
         this._point.height = height;
         this._dynamicPoint = {width: this._point.width, height: this._point.height};
-        this._calculateCapacity();
     };
     
     p.getPoint = function() {
@@ -151,12 +148,11 @@ var charts = {};
     };
     
     p.getInterpolatedValue = function(index) {
-        if (this._data.length === 0) return 0;
         index = Math.round(index * 100) / 100;
         index = Math.min(index, this._data.length - 1);
         index = Math.max(index, 0);
         var intIndex = Math.floor(index);
-        if (intIndex === index) return this._data[index];
+        if (intIndex == index) return this._data[index];
         var delta = this._data[intIndex + 1] - this._data[intIndex];
         return this._data[intIndex] + delta * (index - intIndex);
     };
@@ -321,8 +317,7 @@ var charts = {};
     p._calculateDynamic = function() {
         var workHeight = this._size.height - this._axis.dynamicSpace.top - this._axis.dynamicSpace.bottom;
         var workDelta = this._extremeMax.value - this._extremeMin.value  - this._axis.offset;
-        var tempPointHeight = workHeight / workDelta;
-        tempPointHeight = Math.min(tempPointHeight, workHeight);
+        var tempPointHeight = workHeight / Math.max(workDelta, 0.001);
         
         var tempAxisOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom / tempPointHeight;
         
@@ -368,9 +363,9 @@ var charts = {};
         var currentMin = {value: min, age: this._widthCapacity};
         for (var i = 0; i < data.length; i++) {
             currentMax.value = Math.max(currentMax.value, data[i]);
-            if (currentMax.value === data[i]) currentMax.age = data.length - i - 1;
+            if (currentMax.value == data[i]) currentMax.age = data.length - i - 1;
             currentMin.value = Math.min(currentMin.value, data[i]);
-            if (currentMin.value === data[i]) currentMin.age = data.length - i - 1;
+            if (currentMin.value == data[i]) currentMin.age = data.length - i - 1;
         }
         return {min: currentMin, max: currentMax};
     };
