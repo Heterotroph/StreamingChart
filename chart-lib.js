@@ -151,6 +151,19 @@ var charts = {};
         return this._widthCapacity;
     };
     
+    p.getExtreme = function() {
+        var indexCapacity = Math.min(this._data.length, this._widthCapacity) - 1;
+        var min = {
+            value: this._extremeMin.value,
+            index: indexCapacity - this._extremeMin.age
+        };
+        var max = {
+            value: this._extremeMax.value,
+            index: indexCapacity - this._extremeMax.age
+        };
+        return {min: min, max: max};
+    };
+    
     p.getInterpolatedValue = function(index) {
         if (this._data.length === 0) return 0;
         index = Math.round(index * 100) / 100;
@@ -167,21 +180,8 @@ var charts = {};
         return this.getInterpolatedValue(index);
     };
     
-    p.getExtreme = function() {
-        var indexCapacity = Math.min(this._data.length, this._widthCapacity) - 1;
-        var min = {
-            value: this._extremeMin.value,
-            index: indexCapacity - this._extremeMin.age
-        };
-        var max = {
-            value: this._extremeMax.value,
-            index: indexCapacity - this._extremeMax.age
-        };
-        return {min: min, max: max};
-    };
-    
     p.getIndexByLocalX = function(localX) {
-        return localX / this._dynamicPoint.width;
+        return Math.round(localX / this._dynamicPoint.width);
     };
     
     p.getLocalXByIndex = function(index) {
