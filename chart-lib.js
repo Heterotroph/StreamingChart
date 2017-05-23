@@ -63,7 +63,7 @@ var charts = {};
     p.append = function(data) {
         if (data.length === 0) return;
         var totalData = this._data.concat(data);
-        this._data = totalData.slice(-this._widthCapacity);
+        this._data = totalData.splice(-this._widthCapacity);
         
         this._searchExtreme(data);
         this._processExtreme();
