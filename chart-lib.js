@@ -181,7 +181,7 @@ var charts = {};
     };
     
     p.getIndexByLocalX = function(localX) {
-        return Math.round(localX / this._dynamicPoint.width);
+        return localX / this._dynamicPoint.width;
     };
     
     p.getLocalXByIndex = function(index) {
