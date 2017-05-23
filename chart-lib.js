@@ -186,7 +186,7 @@ var charts = {};
     
     p.getLocalXByIndex = function(index) {
         var localX = index * this._dynamicPoint.width;
-        return Math.round(localX);
+        return localX;
     };
     
     p.getValueByLocalY = function(localY) {
