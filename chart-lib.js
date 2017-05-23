@@ -176,17 +176,17 @@ var charts = {};
     };
     
     p.getInterpolatedValueByLocalX = function(localX) {
-        var index = this.getIndexByLocalX(localX);
+        var index = localX / this._dynamicPoint.width;
         return this.getInterpolatedValue(index);
     };
     
     p.getIndexByLocalX = function(localX) {
-        return localX / this._dynamicPoint.width;
+        return Math.round(localX / this._dynamicPoint.width);
     };
     
     p.getLocalXByIndex = function(index) {
         var localX = index * this._dynamicPoint.width;
-        return localX;
+        return Math.round(localX);
     };
     
     p.getValueByLocalY = function(localY) {
