@@ -105,9 +105,9 @@ var charts = {};
     
     p.setComplexSize = function(width, height) {
         var widthSegments = this._size.width /  this._dynamicPoint.width;
-        widthSegments = Math.ceil(widthSegments * 1000) / 1000; //TODO: Убрать этот костыль и найти красивое решение
+        widthSegments = Math.ceil(widthSegments * 1000) / 1000;
         var heightSegments = this._size.height / this._dynamicPoint.height;
-        heightSegments = Math.ceil(heightSegments * 1000) / 1000; //TODO: ...
+        heightSegments = Math.ceil(heightSegments * 1000) / 1000;
         this.setSize(width, height);
         this.setPoint(this._size.width / widthSegments, this._size.height / heightSegments);
     };
@@ -182,7 +182,8 @@ var charts = {};
     };
     
     p.getIndexByLocalX = function(localX) {
-        return Math.round(localX / this._dynamicPoint.width);
+        var index = Math.round(localX / this._dynamicPoint.width);
+        return Math.min(index, this._data.length - 1);
     };
     
     p.getLocalXByIndex = function(index) {
