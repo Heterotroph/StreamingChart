@@ -63,7 +63,23 @@ var charts = {};
     p.append = function(data) {
         if (data.length === 0) return;
         var totalData = this._data.concat(data);
-        this._data = totalData.splice(-this._widthCapacity);
+        this.set(totalData.splice(-this._widthCapacity));
+    };
+    
+    p.replace = function(data) {
+        if (data.length === 0) return;
+        this._data.length -= Math.min(data.length, this._data.length);
+        this.set(this._data.concat(data));
+    };
+    
+    p.set = function(data) {
+        if (data.length === 0) {
+            this.clear();
+            return;
+        }
+        
+        data.length = Math.min(this._widthCapacity, data.length);
+        this._data = data;
         
         this._searchExtreme(data);
         this._processExtreme();
@@ -81,7 +97,7 @@ var charts = {};
     };
     
     p.redraw = function() {
-        this.append(this._data.splice(0, this._data.length));
+        this.set(this._data);
         this._drawBackgroundShape(this._size, this._style.background);
         this._updateGrid(this._style.grid);
         this._drawAxisX(this._style.axisX);
