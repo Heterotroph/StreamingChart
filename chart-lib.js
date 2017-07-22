@@ -97,7 +97,7 @@ var charts = {};
     };
     
     p.redraw = function() {
-        this.set(this._data);
+        if (this._data.length) this.set(this._data);
         this._drawBackgroundShape(this._size, this._style.background);
         this._updateGrid(this._style.grid);
         this._drawAxisX(this._style.axisX);
