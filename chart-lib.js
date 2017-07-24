@@ -63,7 +63,13 @@ var charts = {};
     p.append = function(data) {
         if (data.length === 0) return;
         var totalData = this._data.concat(data);
-        this.set(totalData.splice(-this._widthCapacity));
+        this._data = totalData.splice(-this._widthCapacity);
+        
+        this._searchExtreme(data);
+        this._processExtreme();
+        
+        this._clearChartAndPoints();
+        this._drawChart(0, this._dynamicPoint.width, this._data, this._style.chart);
     };
     
     p.replace = function(data) {
@@ -73,19 +79,21 @@ var charts = {};
     };
     
     p.set = function(data) {
-        if (data.length === 0) {
-            this.clear();
-            return;
+        this.clear();
+        if (data.length) {
+            this._data = [];
+            this.append(data);
         }
-        
-        data.length = Math.min(this._widthCapacity, data.length);
-        this._data = data;
-        
-        this._searchExtreme(data);
-        this._processExtreme();
-        
-        this._clearChartAndPoints();
-        this._drawChart(0, this._dynamicPoint.width, this._data, this._style.chart);
+    };
+    
+    p.remove = function(count) {
+        if (count === 0)  return;
+        if (count < 0) {
+            this._data.length = Math.max(0, this._data.length + count);
+        } else {
+            this._data.splice(0, count);
+        }
+        this.set(this._data);
     };
     
     p.clear = function() {
