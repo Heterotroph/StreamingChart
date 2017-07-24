@@ -8,19 +8,21 @@ var charts = {};
 (function() {
 
     /**
-     * Example of arguments:
-     *  size = {width: 1000, height: 400}
-     *  point = {width: 50, height: 1}
-     *  axis = {offset: 0, dynamicSpace: {top: 10, bottom: 0}, isDynamic: false}
-     *  style = {
-     *      background: {color: "#000000", alpha: 0.5},
-     *      grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
-     *      axisX:  {thickness: 1, color: "#000000", alpha: 1, offset: 0},
-     *      chart: {
-     *          lines: {thickness: 3, color: "#000000", alpha: 0.8, bounds: true},
-     *          points:  {thickness: 3, radius: 2, lineColor: "#0000FF", fillColor: "#FF0000", alpha: 0.8, bounds: true}
-     *      }
-     *  }
+     *  Streaming chart.
+     *  @constructor
+     *  @param {object} size - Chart size as an object in pixels. Example: {width: 1000, height: 400}
+     *  @param {object} point - Point size as an object in pixels. Example: {width: 50, height: 1}
+     *  @param {object} axis - Axis parameters. Example: {offset: 0, dynamicSpace: {top: 10, bottom: 0}, isDynamic: false}
+     *  @param {object} style - Visual parameters. Example:
+     *    {
+     *        background: {color: "#000000", alpha: 0.5},
+     *        grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
+     *        axisX:  {thickness: 1, color: "rgba(0,0,0,.9)", alpha: 1, offset: 0},
+     *        chart: {
+     *            lines: {thickness: 3, color: "#000000", alpha: 0.8, bounds: true},
+     *            points:  {thickness: 3, radius: 2, lineColor: "#0000FF", fillColor: "#FF0000", alpha: 0.8, bounds: true}
+     *        }
+     *    }
      */ 
     function StreamingChart(size, point, axis, style) {
         this.Container_constructor();
@@ -60,6 +62,10 @@ var charts = {};
     //  PUBLIC METHODS
     //
     
+    /**
+     * Adds points without deleting existing ones if their number is less than or equal to the calculated capacity by width
+     * @param {array} data - Array of points of type Number
+     */
     p.append = function(data) {
         if (data.length === 0) return;
         var totalData = this._data.concat(data);
@@ -72,12 +78,20 @@ var charts = {};
         this._drawChart(0, this._dynamicPoint.width, this._data, this._style.chart);
     };
     
+    /**
+     * Replaces the last n points
+     * @param {array} data - Array of points of type Number
+     */
     p.replace = function(data) {
         if (data.length === 0) return;
         this._data.length -= Math.min(data.length, this._data.length);
         this.set(this._data.concat(data));
     };
     
+    /**
+     * Sets the points
+     * @param {array} data - Array of points of type Number
+     */
     p.set = function(data) {
         this.clear();
         if (data.length) {
@@ -86,6 +100,10 @@ var charts = {};
         }
     };
     
+    /**
+     * Remove points from chart
+     * @param {Number} count - Number of points to remove. A negative count indicated last elements in the sequence.
+     */
     p.remove = function(count) {
         if (count === 0)  return;
         if (count < 0) {
@@ -96,6 +114,9 @@ var charts = {};
         this.set(this._data);
     };
     
+    /**
+     * Remove all point and clear chart
+     */
     p.clear = function() {
         this._data = [];
         this._clearChartAndPoints();
@@ -104,6 +125,9 @@ var charts = {};
         this._moveAxisX(this._style.axisX.offset);
     };
     
+    /**
+     * Redraw all
+     */
     p.redraw = function() {
         if (this._data.length) this.set(this._data);
         this._drawBackgroundShape(this._size, this._style.background);
@@ -112,21 +136,33 @@ var charts = {};
         this._updateMask(this._style.chart.lines.bounds, this._size.width, this._size.height);
     };
     
+    /**
+     * 
+     */ 
     p.setStyle = function(style) {
         this._style = style;
         this.redraw();
     };
     
+    /**
+     * 
+     */
     p.setGrid = function(width, height) {
         this._style.grid.width = width;
         this._style.grid.height = height;
         this._updateGrid(this._style.grid);
     };
     
+    /**
+     * 
+     */
     p.getGrid = function() {
         return {width: this._style.grid.width, height: this._style.grid.height};
     };
     
+    /**
+     * 
+     */
     p.setComplexSize = function(width, height) {
         var widthSegments = this._size.width /  this._dynamicPoint.width;
         widthSegments = Math.ceil(widthSegments * 1000) / 1000;
@@ -136,16 +172,25 @@ var charts = {};
         this.setPoint(this._size.width / widthSegments, this._size.height / heightSegments);
     };
     
+    /**
+     * 
+     */
     p.setSize = function(width, height) {
         this._size.width = width;
         this._size.height = height;
         this._calculateCapacity();
     };
     
+    /**
+     * 
+     */
     p.getSize = function() {
         return {width: this._size.width, height: this._size.height};
     };
     
+    /**
+     * 
+     */
     p.setPoint = function(width, height) {
         this._point.width = width;
         this._point.height = height;
@@ -153,29 +198,46 @@ var charts = {};
         this._calculateCapacity();
     };
     
+    /**
+     * 
+     */
     p.getPoint = function() {
         return {width: this._dynamicPoint.width, height: this._dynamicPoint.height};
     };
     
+    /**
+     * 
+     */
     p.setOffset = function(value) {
         this._axis.offset = value;
         this._dynamicOffset = value;
         this._calculateCapacity();
     };
     
+    /**
+     * 
+     */
     p.getOffset = function() {
         return this._dynamicOffset;
     };
     
-    
+    /**
+     * 
+     */
     p.getData = function() {
         return this._data.slice();
     };
     
+    /**
+     * 
+     */
     p.getCapacity = function() {
         return this._widthCapacity;
     };
     
+    /**
+     * 
+     */
     p.getExtreme = function() {
         var indexCapacity = Math.min(this._data.length, this._widthCapacity) - 1;
         var min = {
@@ -189,6 +251,9 @@ var charts = {};
         return {min: min, max: max};
     };
     
+    /**
+     * 
+     */
     p.getInterpolatedValue = function(index) {
         if (this._data.length === 0) return 0;
         index = Math.round(index * 100) / 100;
@@ -200,25 +265,40 @@ var charts = {};
         return this._data[intIndex] + delta * (index - intIndex);
     };
     
+    /**
+     * 
+     */
     p.getInterpolatedValueByLocalX = function(localX) {
         var index = localX / this._dynamicPoint.width;
         return this.getInterpolatedValue(index);
     };
     
+    /**
+     * 
+     */
     p.getIndexByLocalX = function(localX) {
         var index = Math.round(localX / this._dynamicPoint.width);
         return Math.min(index, this._data.length - 1);
     };
     
+    /**
+     * 
+     */
     p.getLocalXByIndex = function(index) {
         var localX = index * this._dynamicPoint.width;
         return Math.round(localX);
     };
     
+    /**
+     * 
+     */
     p.getValueByLocalY = function(localY) {
         return (this._size.height - localY) / this._dynamicPoint.height + this._dynamicOffset;
     };
     
+    /**
+     * 
+     */
     p.getLocalYByValue = function(value) {
         var localY = this._size.height - (this._applyOffset(value) * this._dynamicPoint.height);
         return Math.round(localY);
