@@ -312,7 +312,7 @@ var charts = {};
         var aX, aY, bX, bY;
         aX = offsetX;
         aY = this._applyOffset(data[0]) * this._dynamicPoint.height;
-        this._chartShape.graphics.setStrokeStyle(style.lines.thickness).beginStroke(style.lines.color);
+        this._chartShape.graphics.setStrokeStyle(style.lines.thickness, 1, 1, 0, true).beginStroke(style.lines.color);
         this._pointShape.graphics.setStrokeStyle(style.points.thickness).beginStroke(style.points.lineColor);
         if (offsetX === 0) this._drawPoint(0, Math.round(aY), style.points);
         for (var i = 0; i < data.length - 1; i++) {
@@ -334,7 +334,7 @@ var charts = {};
     
     p._drawPoint = function(x, y, style) {
         var graphics = this._pointShape.graphics;
-        if (style.radius === 0) return;
+        if (style.radius === 0 || style.alpha === 0) return;
         if (style.bounds && !this._isInsideBounds(x, y)) return;
         graphics.beginFill(style.fillColor);
         graphics.drawCircle(x, this._size.height - y, style.radius);
