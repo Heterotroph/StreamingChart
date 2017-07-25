@@ -192,8 +192,8 @@ var charts = {};
      * 
      */
     p.setPoint = function(width, height) {
-        this._point.width = width;
-        this._point.height = height;
+        this._point.width = Math.max(width, 1 / 1000);
+        this._point.height = Math.max(height, 1 / 1000);
         this._dynamicPoint = {width: this._point.width, height: this._point.height};
         this._calculateCapacity();
     };
@@ -357,6 +357,7 @@ var charts = {};
     
     p._drawGridShape = function(stepX, stepY, style) {
         var graphics = this._gridShape.graphics.clear();
+        if (stepX < 0 || stepY < 0) return;
         if (style.alpha === 0) return;
         graphics.setStrokeDash(style.dash);
         graphics.setStrokeStyle(style.thickness).beginStroke(style.color);
