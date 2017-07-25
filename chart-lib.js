@@ -357,18 +357,17 @@ var charts = {};
     
     p._drawGridShape = function(stepX, stepY, style) {
         var graphics = this._gridShape.graphics.clear();
-        if (stepX < 0 || stepY < 0) return;
         if (style.alpha === 0) return;
         graphics.setStrokeDash(style.dash);
         graphics.setStrokeStyle(style.thickness).beginStroke(style.color);
-        if (stepX) {
+        if (stepX > 0) {
             for (var x = stepX; x < this._size.width; x += stepX) {
                 graphics.moveTo(x, 0).lineTo(x, this._size.height);
             }
         }
         var gridOffset = (-this._dynamicOffset * this._dynamicPoint.height) % stepY;
         gridOffset = gridOffset < 0 ? gridOffset + stepY : gridOffset;
-        if (stepY) {
+        if (stepY > 0) {
             for (var y = this._size.height - gridOffset; y >= 0; y -= stepY) {
                 graphics.moveTo(0, y).lineTo(this._size.width, y);
             }
