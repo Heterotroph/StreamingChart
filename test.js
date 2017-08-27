@@ -35,11 +35,8 @@ function handleResizing() {
         if (!chartA0) return;
         var width = canvas.width - 50;
         chartA0.setComplexSize(width, chartA0.getSize().height);
-        chartA0.redraw();
         chartB0.setComplexSize(width, chartB0.getSize().height);
-        chartB0.redraw();
         chartC0.setComplexSize(width - 250, chartC0.getSize().height);
-        chartC0.redraw();
         fieldsContainer.x = chartC0.x + chartC0.getSize().width + 25;
         fieldsContainer.y = chartC0.y;
     }

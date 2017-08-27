@@ -56,6 +56,7 @@ var charts = {};
         this.redraw();
     }
     
+    var LIMIT = 1000;
     var p = createjs.extend(StreamingChart, createjs.Container);
     
     //
@@ -64,7 +65,7 @@ var charts = {};
     
     /**
      * Adds points without deleting existing ones if their number is less than or equal to the calculated capacity by width
-     * @param {array} data - Array of points of type Number
+     * @param {Array.<number>} data - Array of points of type Number
      */
     p.append = function(data) {
         if (data.length === 0) return;
@@ -80,7 +81,7 @@ var charts = {};
     
     /**
      * Replaces the last n points
-     * @param {array} data - Array of points of type Number
+     * @param {Array.<number>} data - Array of points of type Number
      */
     p.replace = function(data) {
         if (data.length === 0) return;
@@ -89,8 +90,8 @@ var charts = {};
     };
     
     /**
-     * Sets the points
-     * @param {array} data - Array of points of type Number
+     * Specifies the points
+     * @param {Array.<number>} data - Array of points of type Number
      */
     p.set = function(data) {
         this.clear();
@@ -102,7 +103,7 @@ var charts = {};
     
     /**
      * Remove points from chart
-     * @param {Number} count - Number of points to remove. A negative count indicated last elements in the sequence.
+     * @param {number} count - Number of points to remove. A negative count indicated last elements in the sequence.
      */
     p.remove = function(count) {
         if (count === 0)  return;
@@ -129,7 +130,7 @@ var charts = {};
      * Redraw all
      */
     p.redraw = function() {
-        if (this._data.length) this.set(this._data);
+        if (this._data.length > 0) this.set(this._data);
         this._drawBackgroundShape(this._size, this._style.background);
         this._updateGrid(this._style.grid);
         this._drawAxisX(this._style.axisX);
@@ -137,7 +138,7 @@ var charts = {};
     };
     
     /**
-     * 
+     * Replace style object and redraw
      */ 
     p.setStyle = function(style) {
         this._style = style;
@@ -145,7 +146,7 @@ var charts = {};
     };
     
     /**
-     * 
+     * Replace grid width and redraw
      */
     p.setGrid = function(width, height) {
         this._style.grid.width = width;
@@ -154,89 +155,94 @@ var charts = {};
     };
     
     /**
-     * 
+     * Returns current grid size
      */
     p.getGrid = function() {
         return {width: this._style.grid.width, height: this._style.grid.height};
     };
     
     /**
-     * 
+     * Specifies chart size and the relative change size of the point
      */
     p.setComplexSize = function(width, height) {
-        var widthSegments = this._size.width /  this._dynamicPoint.width;
-        widthSegments = Math.ceil(widthSegments * 1000) / 1000;
-        var heightSegments = this._size.height / this._dynamicPoint.height;
-        heightSegments = Math.ceil(heightSegments * 1000) / 1000;
-        this.setSize(width, height);
-        this.setPoint(this._size.width / widthSegments, this._size.height / heightSegments);
+        this._point.width *= width / this._size.width;
+        this._point.width = Math.floor(this._point.width * LIMIT) / LIMIT;
+        this._point.height *= height / this._size.height;
+        this._point.height = Math.floor(this._point.height * LIMIT) / LIMIT;
+        this._dynamicPoint = {width: this._point.width, height: this._point.height};
+        this._size.width = width;
+        this._size.height = height;
+        this.redraw();
     };
     
     /**
-     * 
+     * Specifies chart size
      */
     p.setSize = function(width, height) {
         this._size.width = width;
         this._size.height = height;
         this._calculateCapacity();
+        this.redraw();
     };
     
     /**
-     * 
+     * Returns chart size
      */
     p.getSize = function() {
         return {width: this._size.width, height: this._size.height};
     };
     
     /**
-     * 
+     * Specifies point size
      */
     p.setPoint = function(width, height) {
-        this._point.width = Math.max(width, 1 / 1000);
-        this._point.height = Math.max(height, 1 / 1000);
+        this._point.width = Math.max(width, 1 / LIMIT);
+        this._point.height = Math.max(height, 1 / LIMIT);
         this._dynamicPoint = {width: this._point.width, height: this._point.height};
         this._calculateCapacity();
+        this.redraw();
     };
     
     /**
-     * 
+     * Returns current point size
      */
     p.getPoint = function() {
         return {width: this._dynamicPoint.width, height: this._dynamicPoint.height};
     };
     
     /**
-     * 
+     * Set dynamic Y offset
      */
     p.setOffset = function(value) {
         this._axis.offset = value;
         this._dynamicOffset = value;
         this._calculateCapacity();
+        this.redraw();
     };
     
     /**
-     * 
+     * Returns dunamic Y offset
      */
     p.getOffset = function() {
         return this._dynamicOffset;
     };
     
     /**
-     * 
+     * Returns data
      */
     p.getData = function() {
         return this._data.slice();
     };
     
     /**
-     * 
+     * Returns width capacity of the points
      */
     p.getCapacity = function() {
         return this._widthCapacity;
     };
     
     /**
-     * 
+     * Returns currently displayed extreme values of the data
      */
     p.getExtreme = function() {
         var indexCapacity = Math.min(this._data.length, this._widthCapacity) - 1;
@@ -252,11 +258,11 @@ var charts = {};
     };
     
     /**
-     * 
+     * Returns value of data by floating index with interpolation of two points
      */
     p.getInterpolatedValue = function(index) {
         if (this._data.length === 0) return 0;
-        index = Math.round(index * 100) / 100;
+        index = Math.round(index * LIMIT) / LIMIT;
         index = Math.min(index, this._data.length - 1);
         index = Math.max(index, 0);
         var intIndex = Math.floor(index);
@@ -266,7 +272,7 @@ var charts = {};
     };
     
     /**
-     * 
+     * Returns value of data by x (pixels) coordinate with interpolation of two points
      */
     p.getInterpolatedValueByLocalX = function(localX) {
         var index = localX / this._dynamicPoint.width;
@@ -274,7 +280,7 @@ var charts = {};
     };
     
     /**
-     * 
+     * Returns data index by x coordinate
      */
     p.getIndexByLocalX = function(localX) {
         var index = Math.round(localX / this._dynamicPoint.width);
@@ -282,7 +288,7 @@ var charts = {};
     };
     
     /**
-     * 
+     * Returns data x coordinate by index
      */
     p.getLocalXByIndex = function(index) {
         var localX = index * this._dynamicPoint.width;
@@ -290,14 +296,14 @@ var charts = {};
     };
     
     /**
-     * 
+     * Returns value in displayed range by y coordinate
      */
     p.getValueByLocalY = function(localY) {
         return (this._size.height - localY) / this._dynamicPoint.height + this._dynamicOffset;
     };
     
     /**
-     * 
+     * Returns y coordinate in displayed range by value
      */
     p.getLocalYByValue = function(value) {
         var localY = this._size.height - (this._applyOffset(value) * this._dynamicPoint.height);
@@ -428,7 +434,7 @@ var charts = {};
     p._calculateDynamic = function() {
         var workHeight = this._size.height - this._axis.dynamicSpace.top - this._axis.dynamicSpace.bottom;
         var workDelta = this._extremeMax.value - this._extremeMin.value  - this._axis.offset;
-        var tempPointHeight = workHeight / Math.max(workDelta, 0.001);
+        var tempPointHeight = workHeight / Math.max(workDelta, 1 / LIMIT);
         
         var tempAxisOffset = this._extremeMin.value - this._axis.dynamicSpace.bottom / tempPointHeight;
         
@@ -441,8 +447,8 @@ var charts = {};
     };
     
     p._calculateCapacity = function() {
-        this._widthCapacity = Math.floor(this._size.width /  this._dynamicPoint.width) + 1;
-        this._heightCapacity = Math.floor(this._size.height / this._dynamicPoint.height) + 1;
+        this._widthCapacity = Math.round(this._size.width /  this._dynamicPoint.width) + 1;
+        this._heightCapacity = Math.round(this._size.height / this._dynamicPoint.height) + 1;
     };
     
     p._applyOffset = function(y) {
