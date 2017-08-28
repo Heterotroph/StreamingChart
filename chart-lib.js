@@ -16,7 +16,7 @@ var charts = {};
      *  @param {object} style - Visual parameters. Example:
      *    {
      *        background: {color: "#000000", alpha: 0.5},
-     *        grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0]},
+     *        grid: {thickness: 1, color: "#00FFFF", alpha: 1, width: 1, height: 20, dash: [1, 0], offset: 0},
      *        axisX:  {thickness: 1, color: "rgba(0,0,0,.9)", alpha: 1, offset: 0},
      *        chart: {
      *            lines: {thickness: 3, color: "#000000", alpha: 0.8, bounds: true},
@@ -160,6 +160,21 @@ var charts = {};
     p.getGrid = function() {
         return {width: this._style.grid.width, height: this._style.grid.height};
     };
+
+    /**
+     * Specifies start position of vertical grid lines
+     */
+    p.setGridOffset = function(value) {
+        this._style.grid.offset = value;
+        this._updateGrid(this._style.grid);
+    }
+
+    /**
+     * Returns start position of vertical grid lines
+     */
+    p.getGridOffset = function() {
+        return this._style.grid.offset;
+    }
     
     /**
      * Specifies chart size and the relative change size of the point
@@ -357,17 +372,19 @@ var charts = {};
     
     p._updateGrid = function(style) {
         var stepX = this._dynamicPoint.width * this._style.grid.width;
+        var startX = style.offset * this._dynamicPoint.width % stepX;
+        startX = startX == 0 ? stepX : startX;
         var stepY = this._dynamicPoint.height * this._style.grid.height;
-        this._drawGridShape(stepX, stepY, style);
+        this._drawGridShape(stepX, startX, stepY, style);
     };
     
-    p._drawGridShape = function(stepX, stepY, style) {
+    p._drawGridShape = function(stepX, startX, stepY, style) {
         var graphics = this._gridShape.graphics.clear();
         if (style.alpha === 0) return;
         graphics.setStrokeDash(style.dash);
         graphics.setStrokeStyle(style.thickness).beginStroke(style.color);
         if (stepX > 0) {
-            for (var x = stepX; x < this._size.width; x += stepX) {
+            for (var x = startX; x < this._size.width; x += stepX) {
                 graphics.moveTo(x, 0).lineTo(x, this._size.height);
             }
         }
