@@ -167,14 +167,14 @@ var charts = {};
     p.setGridOffset = function(value) {
         this._style.grid.offset = value;
         this._updateGrid(this._style.grid);
-    }
+    };
 
     /**
      * Returns start position of vertical grid lines
      */
     p.getGridOffset = function() {
         return this._style.grid.offset;
-    }
+    };
     
     /**
      * Specifies chart size and the relative change size of the point
@@ -373,7 +373,7 @@ var charts = {};
     p._updateGrid = function(style) {
         var stepX = this._dynamicPoint.width * this._style.grid.width;
         var startX = style.offset * this._dynamicPoint.width % stepX;
-        startX = startX == 0 ? stepX : startX;
+        startX = startX === 0 ? stepX : startX;
         var stepY = this._dynamicPoint.height * this._style.grid.height;
         this._drawGridShape(stepX, startX, stepY, style);
     };
