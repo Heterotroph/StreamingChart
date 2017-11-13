@@ -1,31 +1,26 @@
-var canvas;
-var stage;
-
-var chartA0;
-var chartB0;
-var chartC0;
-var textField;
-
+/**
+ * 
+ * 
+ */
 function init() {
     var canvasID = "c";
     
-    canvas = document.getElementById(canvasID);
+    var canvas = document.getElementById(canvasID);
     window.context = canvas.getContext("2d");
     
-    stage = new createjs.Stage(canvasID);
+    var stage = new createjs.Stage(canvasID);
     createjs.Ticker.on("tick", function() {
         stage.update();
     });
     
-    testComponents();
-    handleResizing();
+    testComponents(canvas, stage);
 }
 
 /**
  * 
  * 
  */
-function handleResizing() {
+function handleResizing(canvas, chartA0, chartB0, chartC0, textField) {
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
      
@@ -46,14 +41,16 @@ function handleResizing() {
  * 
  * 
  */
-function testComponents() {
-    chartA0 = stage.addChild(createChartA0());
-    chartB0 = stage.addChild(createChartB0());
-    chartC0 = stage.addChild(createChartC0());
+function testComponents(canvas, stage) {
+    var chartA0 = stage.addChild(createChartA0(canvas));
+    var chartB0 = stage.addChild(createChartB0(canvas));
+    var chartC0 = stage.addChild(createChartC0(canvas));
     
-    textField = new createjs.Text("EMPTY", "16px Courier", "#000000");
+    var textField = new createjs.Text("EMPTY", "16px Courier", "#000000");
     textField.lineHeight = 16;
     stage.addChild(textField);
+    
+    handleResizing(canvas, chartA0, chartB0, chartC0, textField);
     
     createjs.Ticker.on("tick", function() {
         var text = "Last added: " + chartC0.getData()[chartC0.getData().length - 1];
@@ -75,7 +72,7 @@ function testComponents() {
  * 
  * 
  */
-function createChartA0() {
+function createChartA0(canvas) {
     var size = {width: canvas.width - 50, height: 250};
     var point = {width: size.width / 70, height: 0.20};
     var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 10, bottom: 10}};
@@ -111,7 +108,7 @@ function createChartA0() {
  * 
  * 
  */
-function createChartB0() {
+function createChartB0(canvas) {
     var size = {width: canvas.width - 50, height: 100};
     var point = {width: size.width / 50, height: 0.1};
     var axis = {offset: 0, isDynamic: false, dynamicSpace: {top: 0, bottom: 0}};
@@ -144,7 +141,7 @@ function createChartB0() {
  * 
  * 
  */
-function createChartC0() {
+function createChartC0(canvas) {
     var size = {width: canvas.width - 300, height: 200};
     var point = {width: 1, height: 1};
     var axis = {offset: 0, isDynamic: true, dynamicSpace: {top: 0, bottom: 100}};
