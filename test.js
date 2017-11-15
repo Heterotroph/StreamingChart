@@ -9,8 +9,9 @@ function init() {
     
     var stage = new createjs.Stage(canvasID);
     createjs.Touch.enable(stage, false, true);
-    createjs.Ticker.setFPS(60);
+    createjs.Ticker.setFPS(30);
     createjs.Ticker.on("tick", stage.update.bind(stage));
+    stage.preventSelection = false;
     
     testComponents(canvas, stage);
 }

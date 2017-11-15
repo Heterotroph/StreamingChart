@@ -416,7 +416,6 @@ var charts = {};
         var hasFill = this._beginFillShape(coords, style);
         if (!hasFill) return;
         var graphics = this._fillShape.graphics;
-        graphics.beginStroke("rgba(0,0,0,0)");
         var isFirst = offsetX === 0;
         if (isFirst) graphics.moveTo(coords[0].x, coords[0].y);
         for (var i = Number(isFirst); i < coords.length; i++) {
@@ -429,8 +428,6 @@ var charts = {};
                 .closePath()
                 .endStroke()
                 .endFill();
-        if (style.type == "linear") {
-        }
     };
     
     p._beginFillShape = function(coords, style) {
