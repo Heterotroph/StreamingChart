@@ -3,15 +3,14 @@
  * 
  */
 function init() {
-    var canvasID = "c";
-    
+    var canvasID = "canvas";
     var canvas = document.getElementById(canvasID);
     window.context = canvas.getContext("2d");
     
     var stage = new createjs.Stage(canvasID);
-    createjs.Ticker.on("tick", function() {
-        stage.update();
-    });
+    createjs.Touch.enable(stage, false, true);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.on("tick", stage.update.bind(stage));
     
     testComponents(canvas, stage);
 }
@@ -21,19 +20,20 @@ function init() {
  * 
  */
 function handleResizing(canvas, chartA0, chartB0, chartC0, textField) {
+    var containerID = "container";
+    var container = document.getElementById(containerID);
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
-     
+    
     function resizeCanvas(e) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        if (!chartA0) return;
-        var width = canvas.width - 50;
+        canvas.height = chartC0.getSize().height + chartC0.y + 25;
+        var width = container.clientWidth - 50;
         chartA0.setComplexSize(width, chartA0.getSize().height);
         chartB0.setComplexSize(width, chartB0.getSize().height);
         chartC0.setComplexSize(width - 250, chartC0.getSize().height);
         textField.x = chartC0.x + chartC0.getSize().width + 25;
         textField.y = chartC0.y + 25;
+        canvas.width = container.clientWidth;
     }
 }
 
@@ -82,7 +82,14 @@ function createChartA0(canvas) {
         axisX:  {thickness: 1, color: "#00FFFF"},
         chart: {
             lines: {thickness: 1, color: "#003333", dash: [1, 0], bounds: true},
-            points:  {thickness: 0, radius: 0, lineColor: "#000000", fillColor: "#FF0000", bounds: true}
+            fill: {
+                type: "linear", 
+                isSymmetric: true,
+                colors: ["rgba(0,255,255,0.25)", "rgba(0,255,255,0.05)", "rgba(0,255,255,0.25)"],
+                ratios: [0, 0.50, 1],
+                coords: [0, 0, 0, 1],
+                bounds: false
+            }
         }
     };
     
@@ -119,7 +126,7 @@ function createChartB0(canvas) {
         chart: {
             lines: {thickness: 2, color: "#000000", dash: [1, 0], bounds: false},
             points:  {thickness: 2, radius: 2, lineColor: "#000000", fillColor: "#FFFFFF", bounds: false},
-            fill: {solid: "rgba(255,0,0,0.5)", bounds: true},
+            fill: {type: "solid", color: "rgba(255,0,0,0.5)", bounds: true}
         }
     };
     
@@ -149,9 +156,9 @@ function createChartC0(canvas) {
         background: {color: "rgba(255,255,255,0)"},
         axisX:  {thickness: 1, color: "#00FF00"},
         chart: {
-            lines: {thickness: 4, color: "rgba(102, 214, 102, 1)", dash: [1, 0], bounds: false},
+            lines: {thickness: 4, color: "rgba(102,214,102,1)", dash: [1, 0], bounds: false},
             points:  {thickness: 6, radius: 12, lineColor: "#FFFFFF", fillColor: "#00BB00", bounds: false},
-            fill: {solid: "rgba(102, 214, 102, 1)", bounds: false},
+            fill: {type: "solid", color: "rgba(102,214,102,1)", bounds: true}
         }
     };
     
@@ -159,21 +166,17 @@ function createChartC0(canvas) {
     chart.y = 475;
     chart.x = 25;
     
-    var data;
-    var req = new XMLHttpRequest();
-    requestData();
-    
-    function requestData() {
+    (function() {
+        var req = new XMLHttpRequest();
         req.open("GET", "test.json", true);
-        
         req.addEventListener("load", reqCompleteHandler, false);
         req.addEventListener("error", reqErrorHandler, false);
-        
         req.send();
-    }
+    })();
     
     function reqCompleteHandler(e) {
-        data = JSON.parse(req.responseText);
+        var req = e.target;
+        var data = JSON.parse(req.responseText);
         
         var pLength = 10;
         chart.setPoint(size.width / (pLength - 1), chart.getPoint().height);
@@ -196,6 +199,7 @@ function createChartC0(canvas) {
     
     function reqErrorHandler(e) {
         alert(req.status + ": " + req.statusText);
+        var req = e.target;
         req.removeEventListener("load", reqCompleteHandler, false);
         req.removeEventListener("error", reqErrorHandler, false);
     }

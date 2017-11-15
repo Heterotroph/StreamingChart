@@ -21,7 +21,13 @@ var charts = {};
      *        chart: {
      *            lines: {thickness: 3, color: "#000000", dash: [1, 0], bounds: true},
      *            points:  {thickness: 3, radius: 2, lineColor: "#0000FF", fillColor: "#FF0000", bounds: true},
-     *            fill: {solid: "#0000FF"}
+     *            fill: {
+     *                type: "linear",
+     *                isSymmetric: true,
+     *                colors: ["rgba(0,255,255,0.9)", "rgba(0,255,255,0.1)", "rgba(0,255,255,0.9)"],
+     *                ratios: [0, 0.5, 1],
+     *                coords: [0, 0, 0, 1]
+     *            }
      *        }
      *    }
      */ 
@@ -406,13 +412,14 @@ var charts = {};
     
     p._drawFill = function(offsetX, coords, style) {
         if (!style) return;
-        if (Object.keys(style).length < 0) return;
-        var hasFill = this._beginFillShape(style);
+        if (coords.length < 2) return;
+        var hasFill = this._beginFillShape(coords, style);
         if (!hasFill) return;
         var graphics = this._fillShape.graphics;
         graphics.beginStroke("rgba(0,0,0,0)");
-        if (offsetX === 0) graphics.moveTo(coords[0].x, coords[0].y);
-        for (var i = 0; i < coords.length; i++) {
+        var isFirst = offsetX === 0;
+        if (isFirst) graphics.moveTo(coords[0].x, coords[0].y);
+        for (var i = Number(isFirst); i < coords.length; i++) {
             graphics.lineTo(coords[i].x, coords[i].y);
         }
         var axisY = this.getLocalYByValue(0);
@@ -422,22 +429,40 @@ var charts = {};
                 .closePath()
                 .endStroke()
                 .endFill();
+        if (style.type == "linear") {
+        }
     };
     
-    p._beginFillShape = function(style) {
+    p._beginFillShape = function(coords, style) {
         var graphics = this._fillShape.graphics.clear();
-        if (!style) return false;
-        if (Object.keys(style).length < 0) return false;
-        var key = Object.keys(style)[0];
-        switch (key) {
-            case "linear":
-                //TODO
-                break;
-            case "radial":
-                //TODO
-                break;
+        switch (style.type) {
             case "solid":
-                graphics.beginFill(style.solid);
+                graphics.beginFill(style.color);
+                break;
+            case "linear":
+                var top = Math.abs(this._extremeMax.value);
+                var offset = this.getLocalYByValue(top);
+                var width = coords[coords.length - 1].x - coords[0].x;
+                var height = 0;
+                if (style.isSymmetric) {
+                    var bottom = Math.abs(this._extremeMin.value);
+                    var absoluteMax = Math.max(top, bottom);
+                    height = absoluteMax * this._dynamicPoint.height * 2;
+                    if (bottom === absoluteMax) {
+                        offset += -Math.abs(top - bottom) * this._dynamicPoint.height;
+                    }
+                } else {
+                    var delta = Math.abs(this._extremeMax.value - this._extremeMin.value);
+                    height = delta * this._dynamicPoint.height;
+                }
+                graphics.beginLinearGradientFill(
+                    style.colors,
+                    style.ratios,
+                    style.coords[0] * width,
+                    style.coords[1] * height + offset,
+                    style.coords[2] * width,
+                    style.coords[3] * height + offset
+                );
                 break;
             default:
                 return false;
@@ -451,7 +476,7 @@ var charts = {};
         if (Object.keys(style).length < 0) return;
         var color = style.color || "rgba(255,255,255,0)";
         graphics.beginFill(color)
-                .drawRect(0, 0, size.width, size.height)
+                .rect(0, 0, size.width, size.height)
                 .endFill();
     };
     
@@ -503,8 +528,10 @@ var charts = {};
     
     p._drawMaskShape = function(shape, x, y, width, height) {
         shape.mask = new createjs.Shape();
-        shape.mask.graphics.beginFill("#000000");
-        shape.mask.graphics.drawRect(x, y, width, height);
+        var graphics = shape.mask.graphics;
+        graphics.beginFill("#000000")
+                .rect(x, y, width, height)
+                .endFill();
     };
     
     p._drawAxisX = function(style) {
@@ -513,8 +540,11 @@ var charts = {};
         if (Object.keys(style).length < 0) return;
         var thickness = style.thickness || 0;
         var color = style.color || "#000000";
-        graphics.setStrokeStyle(thickness).beginStroke(color);
-        graphics.moveTo(0, 0).lineTo(this._size.width, 0).endStroke();
+        graphics.setStrokeStyle(thickness)
+                .beginStroke(color)
+                .moveTo(0, 0)
+                .lineTo(this._size.width, 0)
+                .endStroke();
         this._moveAxisX(0);
     };
     
