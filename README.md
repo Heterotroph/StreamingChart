@@ -1,9 +1,13 @@
 # StreamingChart.JS
 
 StreamingChart component based on EaselJS.
+
 https://heterotroph.github.io/streamingchart/test/index.html
+
 https://www.npmjs.com/package/streamingchart
+
 https://createjs.com/easeljs
+
 
 
 ### index.html
