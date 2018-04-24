@@ -3,8 +3,6 @@
  * https://github.com/Heterotroph/StreamingChart
  */
 
-var charts = {};
-
 (function() {
 
     /**
@@ -629,5 +627,5 @@ var charts = {};
     };
     
     //  ---
-    charts.StreamingChart = createjs.promote(StreamingChart, "Container");
+    module.exports.StreamingChart = createjs.promote(StreamingChart, "Container");
 }());

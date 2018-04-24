@@ -1,26 +1,25 @@
+var charts = require("../streamingchart.js");
 /**
  * 
  * 
  */
-function init() {
-    var canvasID = "canvas";
+global.init = function(canvasID) {
     var canvas = document.getElementById(canvasID);
     window.context = canvas.getContext("2d");
     
     var stage = new createjs.Stage(canvasID);
     createjs.Touch.enable(stage, false, true);
-    createjs.Ticker.setFPS(30);
+    createjs.Ticker.setFPS(60);
     createjs.Ticker.on("tick", stage.update.bind(stage));
     stage.preventSelection = false;
     
-    testComponents(canvas, stage);
+    testCharts(canvas, stage);
 }
-
 /**
  * 
  * 
  */
-function handleResizing(canvas, chartA0, chartB0, chartC0, textField) {
+function handleResize(canvas, chartA0, chartB0, chartC0, textField) {
     var containerID = "container";
     var container = document.getElementById(containerID);
     window.addEventListener("resize", resizeCanvas, false);
@@ -42,7 +41,7 @@ function handleResizing(canvas, chartA0, chartB0, chartC0, textField) {
  * 
  * 
  */
-function testComponents(canvas, stage) {
+function testCharts(canvas, stage) {
     var chartA0 = stage.addChild(createChartA0(canvas));
     var chartB0 = stage.addChild(createChartB0(canvas));
     var chartC0 = stage.addChild(createChartC0(canvas));
@@ -51,7 +50,7 @@ function testComponents(canvas, stage) {
     textField.lineHeight = 16;
     stage.addChild(textField);
     
-    handleResizing(canvas, chartA0, chartB0, chartC0, textField);
+    handleResize(canvas, chartA0, chartB0, chartC0, textField);
     
     createjs.Ticker.on("tick", function() {
         var text = "Last added: " + chartC0.getData()[chartC0.getData().length - 1];

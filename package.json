@@ -1,0 +1,23 @@
+{
+  "name": "streamingchart",
+  "version": "1.0.2",
+  "description": "StreamingChart component based on EaselJS",
+  "main": "streamingchart.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Heterotroph/StreamingChart.git"
+  },
+  "keywords": [
+    "chart",
+    "canvas"
+  ],
+  "author": "R.Akhtyamov",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/Heterotroph/StreamingChart/issues"
+  },
+  "homepage": "https://github.com/Heterotroph/StreamingChart"
+}
